@@ -1,0 +1,42 @@
+"use client";
+
+import { useEffect, useState } from "react"
+import { Listbox } from '@headlessui/react'
+import { TravelMode } from "@googlemaps/google-maps-services-js";
+
+const methods = [
+    { id: 1, name: 'Driving', mode: TravelMode.driving },
+    { id: 2, name: 'Public Transportation', mode: TravelMode.transit},
+    { id: 3, name: 'Walking', mode: TravelMode.walking},
+    { id: 4, name: 'Cycling', mode: TravelMode.bicycling},
+  ]
+
+export interface CommuteListboxProps {
+  onChange: (method: typeof methods[0]) => void
+}
+
+export default function CommuteListbox(props: CommuteListboxProps) {
+    const [selectedMethod, setMethod] = useState(methods[0]);
+
+    useEffect(() => {
+      props.onChange(selectedMethod);
+    }, [selectedMethod]);
+  
+    return (
+      <Listbox value={selectedMethod} onChange={setMethod}>
+      <Listbox.Button  className="bg-blue-100 p-2">{selectedMethod.name}</Listbox.Button>
+      <Listbox.Options>
+        {methods.map((method) => (
+          <Listbox.Option
+            key={method.id}
+            value={method}
+            className="ui-active:bg-blue-500 ui-active:text-white ui-not-active:bg-white ui-not-active:text-black"
+         
+          >
+            {method.name}
+          </Listbox.Option>
+        ))}
+      </Listbox.Options>
+      </Listbox>
+    )
+  }
