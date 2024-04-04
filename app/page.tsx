@@ -32,7 +32,7 @@ export default function Home() {
     });
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}` );
     const podcastContent: any = await response.json();
-    setPodcastText(podcastContent.response.candidates[0].content.parts[0].text);
+    setPodcastText(podcastContent.content);
   }
 
 

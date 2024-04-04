@@ -1,44 +1,25 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { HarmBlockThreshold, HarmCategory, VertexAI } from '@google-cloud/vertexai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const project = '	gemini-hackathon-419118';
-const location = 'us-central1';
-// For the latest list of available Gemini models in Vertex, please refer to https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models
-const textModel =  'gemini-1.0-pro';
-const vertexAi = new VertexAI({project: project, location: location});
-
-// Instantiate models
-const generativeModel = vertexAi.getGenerativeModel({
-  model: textModel,
-  // The following parameters are optional
-  // They can also be passed to individual content generation requests
-  safety_settings: [{
-    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, 
-    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
-  }],
-  generation_config: {
-    max_output_tokens: 2560
-  },
-});
+const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
+const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
 const getData = async (topic: string, duration: number) => {
-  const request = {
-    contents: [{
-      role: 'user', 
-      parts: [{
-        text: `
-        Write the transcript for a podcast about ${topic} that is ${duration} seconds long. 
-        The podcast has a single host.
-        Don't use any comments in brackets. 
-        Don't introduce the host.
-        If you want to add music, put a <MUSIC> tag in the transcript.
-        ` 
-      }]
-    }],
+  const prompt = `
+  Write the transcript for a podcast about ${topic} that is ${duration} seconds long. 
+  The podcast has a single host.
+  Don't use any comments in brackets. 
+  Don't introduce the host.
+  If you want to add music, put a <MUSIC> tag in the transcript.
+  `;
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  return {
+    content: text
   };
-  const resp = await generativeModel.generateContent(request);
-  return resp;
 }
 
 export async function GET(
