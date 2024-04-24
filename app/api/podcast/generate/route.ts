@@ -1,9 +1,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { kv } from '@vercel/kv';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"}, { apiVersion: 'v1beta' });
 
 const getTopics = async (topic: string, durationSec: number) => {
   const maxChapters = durationSec / 60;
@@ -18,12 +19,12 @@ const getTopics = async (topic: string, durationSec: number) => {
     It should have a topic field, title field, a length field (numberic, in seconds) and a chapters field.
     The chapters field should be an array of objects.
     Each object should have a title and a summary of the topic (not the actual text of the chapter).
-    Return ONLY a JSON object. Don't add any quotes or comments around it.
+    IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
   `
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
-  const text = response.text();
+  const text = response.text().replace('```json', '').replace('```', '');
   try {
     const data = JSON.parse(text);
     return data;
@@ -63,13 +64,21 @@ export async function GET(
   req: NextRequest
 ) {
   const { searchParams } = req.nextUrl;
-  const topic = searchParams.get('topic') || "This history of London";
+  const topic = (searchParams.get('topic') || "This history of London").trim();
   const duration = Number(searchParams.get('duration') || 60 * 5);
+
+  const key = `${topic.toLowerCase()}-${duration}`;
+  const cached = await kv.get(key);
+  if (cached) {
+    return NextResponse.json(cached);
+  }
+
   const topics = await getTopics(topic, duration);
-  console.log(topics);
   const script = await getScript(topic, duration, topics);
-  return NextResponse.json({
+  const response = {
     topics,
     script
-  });
+  };
+  kv.set(key, response, { ex: 60 * 60 * 24 });
+  return NextResponse.json(response);
 }

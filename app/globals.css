@@ -3,27 +3,58 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground: #FCE8C3;
+  --font-color-main: #623411;
+  --font-color-logo: #CD3F3E;
+
+  --item-color-main: #E46D35;
+  --item-color-secondary: #F58634;
+  --item-color-tertiary: #EAB04C;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.text-color-main {
+  color: var(--item-color-main);
+}
+
+.logo-text {
+  color: var(--font-color-logo);
+}
+
+
+.teach-me-input {
+  background: var(--font-color-main);
+  color: white;
+
+}
+
+.item-color-main {
+  background-color: var(--item-color-main);
+}
+
+.item-color-secondary {
+  background-color: var(--item-color-secondary);
+}
+
+.item-color-tertiary {
+  background-color: var(--item-color-tertiary);
+}
+
+.create-button {
+  background-color: var(--font-color-logo);
+  color: white;
+}
+
+.dropdown-button {
+  background: var(--item-color-main);
+  color: white;
+  border-radius: 0;
+  border-bottom: var(--item-color-secondary) 16px solid;
+  box-shadow: 0 16px var(--item-color-tertiary);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--font-color-main);
+  background: var(--foreground);
 }
 
 @layer utilities {

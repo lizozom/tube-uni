@@ -24,7 +24,7 @@ export default function CommuteListbox(props: CommuteListboxProps) {
   
     return (
       <Listbox value={selectedMethod} onChange={setMethod}>
-      <Listbox.Button  className="rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 border border-blue-400 me-2 px-2.5 py-0.5">{selectedMethod.name}</Listbox.Button>
+      <Listbox.Button className="rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 border border-blue-400 me-2 px-2.5 py-0.5">{selectedMethod.name}</Listbox.Button>
       <Listbox.Options>
         {methods.map((method) => (
           <Listbox.Option
