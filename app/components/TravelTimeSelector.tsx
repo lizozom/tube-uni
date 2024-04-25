@@ -9,22 +9,22 @@ export interface StationSelectorListboxProps {
 
 export default function TravelTimeSelector(props: StationSelectorListboxProps) {
   const { onChange } = props;
-  const [commuteTime , setCommuteTime] = useState<number | undefined>(props.commuteTime);
+  const [commuteTime , setCommuteTime] = useState<string>(props.commuteTime ? props.commuteTime.toString() : '');
 
   useEffect(() => {
-    setCommuteTime(props.commuteTime);
+    setCommuteTime(props.commuteTime ? props.commuteTime.toString() : '');
   }, [props.commuteTime]);
 
   const handleChange = (e: any) => {
     if (e.target.value === '') {
-      setCommuteTime(undefined);
+      setCommuteTime('');
       onChange(undefined);
       return;
     }
 
     const val = parseInt(e.target.value, 10);
     if (val && val > 0 && val <= 20) {
-      setCommuteTime(val);
+      setCommuteTime(val.toString());
       onChange(val);
     } else {
       setCommuteTime(commuteTime);

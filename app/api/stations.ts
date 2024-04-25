@@ -80,10 +80,6 @@ export const stations = [
        "name":"Beckton Park"
     },
     {  
-       "tla":"BEC",
-       "name":"Becontree"
-    },
-    {  
        "tla":"BPK",
        "name":"Belsize Park"
     },
@@ -1150,10 +1146,6 @@ export const stations = [
     {  
        "tla":"WRP",
        "name":"West Ruislip"
-    },
-    {  
-       "tla":"WST",
-       "name":"West Silvertown"
     },
     {  
        "tla":"WES",

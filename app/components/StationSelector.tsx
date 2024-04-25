@@ -14,8 +14,10 @@ export interface StationSelectorListboxProps {
 
 export default function StationSelector(props: StationSelectorListboxProps) {
   const { stations, title } = props;
-  const [station, setStation] = useState<string | undefined>(props.station);
+  const [station, setStation] = useState<string>(props.station || '');
   const [query, setQuery] = useState('');
+  const [placeholder, setPlaceholder] = useState('choose station');
+
 
 
   const filteredStations =
@@ -32,21 +34,32 @@ export default function StationSelector(props: StationSelectorListboxProps) {
     }
   }, [station]);
 
+  const onFocus = () => {
+    setPlaceholder('');
+  }
+
+  const onBlur = () => {
+    setPlaceholder('choose station');
+  }
+
   return (
     <>
 
-    <div className="px-3 text-lg">{title}</div>
+    <div className="px-4 text-main">{title}</div>
 
     <Combobox value={station} onChange={setStation}>
-      <div className="dropdown-button flex flex-row justify-between px-3 mb-4 w-[70%]">
+      <div className="dropdown-button flex flex-row justify-between pe-3 mb-4 w-full">
         <Combobox.Input
-          className="bg-transparent focus:outline-none h-fit m-0 px-3 py-3 text-lg "
+          className="bg-transparent focus:outline-none h-fit m-0 px-4 py-3 text-lg placeholder:text-white"
           autoComplete="off"
+          placeholder={placeholder}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onChange={(event) => setQuery(event.target.value)} 
         />
         <Combobox.Button className="dropdown-button-footer-1">
               <Image
-                src="/icons/arrow-down.png"
+                src="/icons/arrow-down.svg"
                 width={20}
                 height={20}
                 className="h-2 w-2"
@@ -54,9 +67,9 @@ export default function StationSelector(props: StationSelectorListboxProps) {
               />
         </Combobox.Button>
       </div>
-      <Combobox.Options className="item-color-tertiary text-white">
+      <Combobox.Options className="item-color-tertiary text-white max-h-[172px] overflow-y-scroll	absolute top-[80px] z-10	w-full">
         {filteredStations.map((s) => (
-          <Combobox.Option  className="px-3 py-2" key={s.tla} value={s.name}>
+          <Combobox.Option  className={`px-3 py-2 ${s.name === station ? 'selected' : ''}`} key={s.tla} value={s.name}>
             {s.name}
           </Combobox.Option>
         ))}

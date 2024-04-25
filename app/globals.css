@@ -12,6 +12,14 @@
   --item-color-tertiary: #EAB04C;
 }
 
+.text-main {
+  font-size: 18px;
+}
+
+li.selected {
+  background: var(--item-color-secondary);
+}
+
 .text-color-main {
   color: var(--item-color-main);
 }

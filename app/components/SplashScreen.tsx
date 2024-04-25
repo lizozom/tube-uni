@@ -11,7 +11,7 @@ export function SplashScreen(props: SplashScreenProps) {
     <div className="flex h-screen">
         <div className="flex m-auto flex-col items-center gap-4 ">
         <Image
-                src="/images/logo.png"
+                src="/images/AppLogo.svg"
                 width={250}
                 height={250}
                 className="-my-8"
