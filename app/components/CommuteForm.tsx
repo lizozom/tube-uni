@@ -38,7 +38,7 @@ export function CommuteForm(props: CommuteFormProps) {
   const generatePodcast = async () => {
     if (!topic || !travelTimeMin) return;
     const params = new URLSearchParams({
-      topic: topic.trim(),
+      topic: topic.trim().toLowerCase(),
       duration: ((travelTimeMin || 5) * 60).toString(),
     });
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}` );
@@ -100,10 +100,10 @@ export function CommuteForm(props: CommuteFormProps) {
             <div className="flex flex-col flex-wrap content-end text-4xl px-4 pt-8 text-color-main">
                 tube uni
             </div>
-            <div className="flex flex-col flex-wrap me-auto relative w-[70%]">
+            <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
                 <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
             </div>
-            <div className="flex flex-col flex-wrap ms-auto relative w-[70%]">
+            <div className="flex flex-col flex-wrap ms-auto relative w-[70%] min-w-[330px]">
                 <StationSelector title="to" stations={stations} station={end} onChange={handleEndStationChange}/>
             </div>
             <div className="flex flex-col flex-wrap content-center">

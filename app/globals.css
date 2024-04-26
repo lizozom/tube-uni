@@ -12,6 +12,23 @@
   --item-color-tertiary: #EAB04C;
 }
 
+body {
+  min-height: 100%;
+  margin: 0;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media screen and (max-width: 479px) {
+  .page-wrapper.real-100vh {
+      flex-direction: column;
+      display: flex;
+  }
+}
+
+.real-100vh {
+  height: calc(var(--vh, 1vh)* 100);
+}
+
 .text-main {
   font-size: 18px;
 }

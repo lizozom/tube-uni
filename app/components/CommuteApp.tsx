@@ -25,7 +25,7 @@ export function CommuteApp(props: CommuteAppProps) {
   useEffect(() => {
     setTimeout(() => {
       setShowSplash(false);
-    }, 100);
+    }, 3500);
   }, []);
 
   const onIsLoading = (isLoading: boolean) => {
