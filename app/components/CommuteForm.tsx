@@ -2,24 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { Button, Image } from "@nextui-org/react";
-import { DistanceMatrixResponseData, TravelMode } from "@googlemaps/google-maps-services-js";
+import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
 import { TubeStation } from "../types";
-import { SplashScreen } from "./SplashScreen";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
-import { LoadingScreen } from "./LoaderScreen";
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
     topics: Array<string>;
     placeholderTopic: string;
+    onIsLoading: (isLoading: boolean) => void;
+    onPodcastResponse: (topic: string, duration: number, podcastResponse: any) => void;
 }
 
 export function CommuteForm(props: CommuteFormProps) {
-  const { topics, stations } = props;
+  const { topics, stations, onIsLoading, onPodcastResponse } = props;
 
-  const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [travelTimeMin, setTravelTimeMin] = useState<number | undefined>(undefined);
   const [start, setStart] = useState<string | undefined>();//("Covent Garden");
   const [end, setEnd] = useState<string | undefined>();//("Hyde Park Corner");
@@ -27,12 +25,6 @@ export function CommuteForm(props: CommuteFormProps) {
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
   const [podcastText, setPodcastText] = useState<string>('');
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 3500);
-  }, []);
 
   useEffect(() => {
     if (topic && travelTimeMin && topic.trim().length > 3) {
@@ -44,7 +36,7 @@ export function CommuteForm(props: CommuteFormProps) {
 
 
   const generatePodcast = async () => {
-    if (!topic) return;
+    if (!topic || !travelTimeMin) return;
     const params = new URLSearchParams({
       topic: topic.trim(),
       duration: ((travelTimeMin || 5) * 60).toString(),
@@ -52,13 +44,20 @@ export function CommuteForm(props: CommuteFormProps) {
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}` );
     const podcastContent: any = await response.json();
     setPodcastText(podcastContent.script);
+    onPodcastResponse(topic, travelTimeMin, podcastContent);
   }
 
   const onClick = async () => {
-    setIsLoading(true);
-    // await fetchCommuteTime();
-    await generatePodcast();
-    setIsLoading(false);
+    onIsLoading(true);
+    try {
+      // await fetchCommuteTime();
+      await generatePodcast();
+
+    } catch (e) {
+
+    } finally {
+      onIsLoading(false);
+    }
   }
 
   const loadTitle = () => {
@@ -95,17 +94,6 @@ export function CommuteForm(props: CommuteFormProps) {
     });
   }, [start, end]);
 
-
-  if (showSplash) {
-    return (
-      <SplashScreen></SplashScreen>
-    )
-  } else if (isLoading) {
-    return (
-      <LoadingScreen></LoadingScreen>
-    )
-  }
-
   return (
       <div className="w-100">
         <div className="flex flex-col gap-4">
@@ -134,12 +122,12 @@ export function CommuteForm(props: CommuteFormProps) {
                       onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
                   
                   ></textarea>
-                  <Button className="bg-transparent w-4 h-4 min-w-4 absolute bottom-4 right-0 p-0 mx-2" onClick={loadTitle}>
+                  <Button className="bg-transparent w-6 h-6 min-w-6 absolute bottom-4 right-0 p-0 mx-2" onClick={loadTitle}>
                     <Image
                       src="/icons/refresh.svg"
-                      width={16}
-                      height={16}
-                      className="h-4 w-4"
+                      width={24}
+                      height={24}
+                      className="h-6 w-6"
                       alt="refresh"
                     />
                   </Button>

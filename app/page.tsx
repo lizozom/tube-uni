@@ -1,6 +1,6 @@
 
 import { stations } from './api/stations';
-import { CommuteForm } from "./components/CommuteForm";
+import { CommuteApp } from "./components/CommuteApp";
 
 const topics = [
   'the history of toothbrushes',
@@ -18,7 +18,7 @@ export default function Home() {
   
   return (
     <main className="flex min-h-screen h-full w-full max-w-full flex-col items-left justify-between pt-4">
-      <CommuteForm stations={stations} topics={topics} placeholderTopic={placeholderTopic}/>
+      <CommuteApp stations={stations} topics={topics} placeholderTopic={placeholderTopic}/>
     </main>
   );
 }

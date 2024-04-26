@@ -60,6 +60,25 @@ const getScript = async (topic: string, duration: number, titlesObj: Record<stri
   };
 }
 
+const getAudio = async (script: string) => {
+  const request = {
+    input: {text: script},
+    // Select the language and SSML voice gender (optional)
+    voice: {languageCode: 'en-US', ssmlGender: 'NEUTRAL'},
+    // select the type of audio encoding
+    audioConfig: {audioEncoding: 'MP3'},
+  };
+
+  const response = await fetch(`https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+
+  const parsedResponse: any = await response.json();
+  return parsedResponse;
+
+}
+
 export async function GET(
   req: NextRequest
 ) {
@@ -73,11 +92,16 @@ export async function GET(
     return NextResponse.json(cached);
   }
 
+  console.log("Getting topics");
   const topics = await getTopics(topic, duration);
+  console.log("Getting script")
   const script = await getScript(topic, duration, topics);
+  console.log("Getting audio")
+  const audio = await getAudio(script.content);
   const response = {
     topics,
-    script
+    script,
+    audio
   };
   kv.set(key, response, { ex: 60 * 60 * 24 });
   return NextResponse.json(response);
