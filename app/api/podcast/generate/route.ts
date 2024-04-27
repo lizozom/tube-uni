@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { kv } from '@vercel/kv';
 
+export const maxDuration = 300;
+export const dynamic = 'force-dynamic';
+
 const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
 const model = genAI.getGenerativeModel({ 
     model: "gemini-1.5-pro-latest",
