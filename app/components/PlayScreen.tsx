@@ -54,13 +54,12 @@ export function PlayScreen(props: PlayScreenProps) {
   const { topic, duration, audio, onBack } = props;
 
   const playAudio = () => {
-    debugger;
     // playAudioString(audio.audioContent);
     downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audio.audioContent);  
   }
   
   return (
-    <div className="flex h-screen relative">
+    <div className="flex real-100vh relative">
         <div className="flex m-auto flex-col items-center gap-8 ">
           <button onClick={playAudio}>
             <Image
@@ -70,7 +69,7 @@ export function PlayScreen(props: PlayScreenProps) {
                 alt="logo"
               />
             </button>
-            <span className="text-2xl text-center items-center">{topic} in {duration} minutes</span>
+            <span className="text-2xl text-center items-center">{topic}<br/> in {duration} minutes</span>
         </div>
         <button className="text-2xl absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onBack}>
           back to start

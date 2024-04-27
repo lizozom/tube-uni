@@ -7,6 +7,7 @@ import { LoadingScreen } from "./LoaderScreen";
 import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
 
+
 export interface CommuteAppProps {
     stations: Array<TubeStation>;
     topics: Array<string>;
@@ -23,10 +24,14 @@ export function CommuteApp(props: CommuteAppProps) {
   const [podcastResponse, setPodcastResponse] = useState<any>();
 
   useEffect(() => {
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 3500);
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
   }, []);
+
+  const hideSplash = () => {
+    setShowSplash(false);
+  }
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading);
@@ -56,7 +61,7 @@ export function CommuteApp(props: CommuteAppProps) {
     )
   } else if (showSplash) {
     return (
-      <SplashScreen></SplashScreen>
+      <SplashScreen onClick={hideSplash}></SplashScreen>
     )
   } else if (isLoading) {
     return (

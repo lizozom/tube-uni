@@ -17,7 +17,7 @@ export default function Home() {
   const placeholderTopic = topics[Math.floor(Math.random() * topics.length)];
   
   return (
-    <main className="flex min-h-screen h-full w-full max-w-full flex-col items-left justify-between pt-4">
+    <main className="flex real-100vh w-full max-w-full flex-col items-left justify-between">
       <CommuteApp stations={stations} topics={topics} placeholderTopic={placeholderTopic}/>
     </main>
   );

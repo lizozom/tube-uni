@@ -4,12 +4,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { kv } from '@vercel/kv';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"}, { apiVersion: 'v1beta' });
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-1.5-pro-latest",
+    generationConfig: {
+      maxOutputTokens: 15000,
+    }
+  }, 
+  { 
+    apiVersion: 'v1beta' 
+  });
 
 const getTopics = async (topic: string, durationSec: number) => {
   const maxChapters = durationSec / 60;
   const prompt = `
-    I want to write a fun and educational podcast about ${topic}.
+    Write a fun and educational podcast about ${topic}.
     The podcast will be ${durationSec} seconds long. 
     Don't mention the length of the podcast.
     Give me the title of the podcast and titles for the chapters of the podcast.
@@ -41,20 +49,19 @@ const getTopics = async (topic: string, durationSec: number) => {
 
 const getScript = async (topic: string, duration: number, titlesObj: Record<string, any>) => {
   const prompt = `
-    Use this object and write the script for the podcast about ${topic}.
-    The podcast has a single host. Don't introduce the host.
+    Generate a response that contains at least ${duration/60*160} words and ${duration/60*160*4} tokens!!!!!!!!!
+    Write a script with AT LEAST ${duration/60*160} words for a podcast about ${topic}.
+    Start the podcast by saying "Welcome to tube uni, the podcast that teaches you something new every ride. Today's topic is ${topic}".
+    INclude a short introduction about the topic.
+    Include a short outro about the topic.
     Don't add comments or staging instructions.
-    Reading the podcast should take ${duration} seconds.
-    The script should be approximately ${duration/60*130} words. 
-    Adjust the content length accordingly.
     If you want to add music, add a <MUSIC> tag.
-
-    ${JSON.stringify(titlesObj, null, 2)}
 
   `;
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
+  console.log(`Script length is ${text.split(" ").length}ץ Asked for ${duration/60*160}`)
   return {
     content: text
   };
@@ -87,22 +94,26 @@ export async function GET(
   const duration = Number(searchParams.get('duration') || 60 * 5);
 
   const key = `${topic.toLowerCase()}-${duration}`;
-  const cached = await kv.get(key);
+  const cached = undefined;// await kv.get(key);
+
+  let response: any = {};
   if (cached) {
-    return NextResponse.json(cached);
+    response = cached;
+  } else {
+    // console.log("Getting topics");
+    // const topics = await getTopics(topic, duration);
+    console.log("Getting script")
+    const script = await getScript(topic, duration, {});
+    response = {
+      script
+    };
   }
 
-  console.log("Getting topics");
-  const topics = await getTopics(topic, duration);
-  console.log("Getting script")
-  const script = await getScript(topic, duration, topics);
-  console.log("Getting audio")
-  const audio = await getAudio(script.content);
-  const response = {
-    topics,
-    script,
-    audio
-  };
   kv.set(key, response, { ex: 60 * 60 * 24 });
+
+  console.log("Getting audio")
+  const audio = await getAudio(response.script.content);
+  response.audio = audio;
+
   return NextResponse.json(response);
 }
