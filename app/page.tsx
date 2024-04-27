@@ -10,6 +10,17 @@ const topics = [
   'why flowers bloom in spring',
   'where do squirrels sleep',
   'the way to make silicone',
+  'why are some people left handed',
+  'what are the biggest creatures in the ocean',
+  'where did people poo in ancient times',
+  'why some european countries still have monarchs',
+  'the paint of the golden gate bridge',
+  'the history of the london tube',
+  'how mcdonald\'s works',
+  'who invented peanut butter',
+  'star ratings of hotels',
+  'color blind animals',
+  'the story of fabergé eggs'
 ]
 
 
