@@ -122,20 +122,18 @@ export function CommuteForm(props: CommuteFormProps) {
                       onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
                   
                   ></textarea>
-                  <Button className="bg-transparent w-6 h-6 min-w-6 absolute bottom-4 right-0 p-0 mx-2" onClick={loadTitle}>
+                  <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
                     <Image
                       src="/icons/refresh.svg"
-                      width={24}
-                      height={24}
-                      className="h-6 w-6"
+                      className="h-6 w-6 m-4"
                       alt="refresh"
                     />
-                  </Button>
+                  </button>
                 </div>
 
             </div>
 
-            <div className="flex flex-col flex-wrap content-center">
+            <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
                 <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
                 create podcast                
                 </Button>

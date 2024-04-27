@@ -24,9 +24,9 @@ export function SplashScreen(props: SplashScreenProps) {
   } 
   return (
     <div className="flex real-100vh relative">
-        <div className="flex m-auto flex-col items-center gap-4 ">
+        <div className="flex m-auto flex-col items-center gap-4 pb-16">
         <Image
-                src="/images/AppLogo.svg"
+                src="/images/logo.svg"
                 width={250}
                 height={250}
                 className="-my-8"

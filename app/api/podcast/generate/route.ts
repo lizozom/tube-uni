@@ -55,13 +55,15 @@ const getScript = async (topic: string, duration: number, titlesObj: Record<stri
     INclude a short introduction about the topic.
     Include a short outro about the topic.
     Don't add comments or staging instructions.
+    Don't write "Host:" or "Guest:".
     If you want to add music, add a <MUSIC> tag.
 
   `;
   const result = await model.generateContent(prompt);
   const response = await result.response;
-  const text = response.text();
-  console.log(`Script length is ${text.split(" ").length}ץ Asked for ${duration/60*160}`)
+  let text = response.text();
+  text = text.replace(/<MUSIC>/g, "");
+  console.log(`Script length is ${text.split(" ").length}. Asked for ${duration/60*160}`)
   return {
     content: text
   };
