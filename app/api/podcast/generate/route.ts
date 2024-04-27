@@ -51,7 +51,7 @@ const getScript = async (topic: string, duration: number, titlesObj: Record<stri
   const prompt = `
     Generate a response that contains at least ${duration/60*160} words and ${duration/60*160*4} tokens!!!!!!!!!
     Write a script with AT LEAST ${duration/60*160} words for a podcast about ${topic}.
-    Start the podcast by saying "Welcome to tube uni, the podcast that teaches you something new every ride. Today's topic is ${topic}".
+    Start the podcast by saying "This is Tube Uni. You are listening to your very own podcast about ${topic} . Have a pleasant commute and enjoy your listening!".
     INclude a short introduction about the topic.
     Include a short outro about the topic.
     Don't add comments or staging instructions.
@@ -71,9 +71,18 @@ const getAudio = async (script: string) => {
   const request = {
     input: {text: script},
     // Select the language and SSML voice gender (optional)
-    voice: {languageCode: 'en-US', ssmlGender: 'NEUTRAL'},
-    // select the type of audio encoding
-    audioConfig: {audioEncoding: 'MP3'},
+    voice: {
+      languageCode: "en-US",
+      name: "en-US-Studio-O"
+    },
+    audioConfig: {
+      audioEncoding: "LINEAR16",
+      effectsProfileId: [
+        "small-bluetooth-speaker-class-device"
+      ],
+      pitch: 0,
+      speakingRate: 1
+    }
   };
 
   const response = await fetch(`https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
