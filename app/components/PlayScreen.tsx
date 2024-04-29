@@ -69,7 +69,7 @@ export function PlayScreen(props: PlayScreenProps) {
                 alt="logo"
               />
             </button>
-            <span className="text-2xl text-center items-center">{topic}<br/> in {duration} minutes</span>
+            <span className="text-2xl text-center items-center px-6">{topic} in {duration} minutes</span>
         </div>
         <button className="text-main absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onBack}>
           back to start

@@ -82,8 +82,8 @@ export function CommuteForm(props: CommuteFormProps) {
     const fetchCommuteTime = async () => {
       if (!start || !end) return;
       const params = new URLSearchParams({
-        start: `${start}, London`,
-        end: `${end}, London`
+        start: `${start} station, London`,
+        end: `${end} station, London`
       });
       const response = await fetch(`/api/traverse_time?${params.toString()}` );
       const instructions: DistanceMatrixResponseData = await response.json();

@@ -22,7 +22,7 @@ export async function GET(
   const { searchParams } = req.nextUrl;
   const start = searchParams.get('start') || "Angel, London";
   const end = searchParams.get('end') || "Tower Bridge, London";
-  const mode: TravelMode = searchParams.get('mode') as TravelMode || TravelMode.driving;
+  const mode: TravelMode = searchParams.get('mode') as TravelMode || TravelMode.transit;
   const endpointData = await getData(start, end, mode);
   return NextResponse.json(endpointData);
 }
