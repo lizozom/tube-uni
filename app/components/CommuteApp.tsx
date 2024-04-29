@@ -21,6 +21,7 @@ export function CommuteApp(props: CommuteAppProps) {
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
   const [travelTimeMin, setTravelTimeMin] = useState<number | undefined>(undefined);
   const [topic, setTopic] = useState<string>();
   const [podcastResponse, setPodcastResponse] = useState<any>();
@@ -39,8 +40,9 @@ export function CommuteApp(props: CommuteAppProps) {
     setIsLoading(isLoading);
   }
 
-  const onError = () => {
+  const onError = (errorOrCode?: Error) => {
     setIsError(true);
+    setErrorOrCode(errorOrCode);
   }
 
   const onPodcastResponse = (topic: string, duration: number, podcastResponse: any) => {
@@ -52,6 +54,7 @@ export function CommuteApp(props: CommuteAppProps) {
   const onBack = () => {
     setTopic('');
     setIsError(false);
+    setErrorOrCode(undefined);
     setTravelTimeMin(undefined);
     setPodcastResponse(undefined);
   }
@@ -77,6 +80,7 @@ export function CommuteApp(props: CommuteAppProps) {
   } else if (isError) {
     return (
     <ErrorScreen
+      errorOrCode={errorOrCode}
       onBack={onBack} >
       </ErrorScreen>);
   } else {

@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { kv } from '@vercel/kv';
 import { TextToSpeechClient, v1beta1 } from '@google-cloud/text-to-speech';
 import { Storage } from '@google-cloud/storage';
+import language from '@google-cloud/language';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
@@ -30,6 +31,9 @@ const ttsLongClient = new v1beta1.TextToSpeechLongAudioSynthesizeClient({
   credentials
 });
 const storageClient = new Storage({
+  credentials
+});
+const langClient = new language.LanguageServiceClient({
   credentials
 });
 
@@ -210,6 +214,23 @@ export async function GET(
   const { searchParams } = req.nextUrl;
   const topic = (searchParams.get('topic') || "This history of London").trim();
   const duration = Number(searchParams.get('duration') || 60 * 5);
+
+  const [ moderationResponse ] = await langClient.moderateText({
+    document: {
+      content: topic,
+      type: 'PLAIN_TEXT'
+    }
+  });
+
+  console.log("Running moderation")
+  if (moderationResponse && moderationResponse.moderationCategories) {
+    for (let category of moderationResponse.moderationCategories) {
+      if (category.confidence && category.confidence > 0.3) {
+        console.log(`Content is flagged as ${category.name}`);
+        return NextResponse.json({ errorCode: 400 });
+      }
+    }
+  }
 
   const key = `${topic.toLowerCase()}-${duration}`;
   const cached = await kv.get(key);

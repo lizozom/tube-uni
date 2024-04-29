@@ -13,7 +13,7 @@ export interface CommuteFormProps {
     placeholderTopic: string;
     onIsLoading: (isLoading: boolean) => void;
     onPodcastResponse: (topic: string, duration: number, podcastResponse: any) => void;
-    onError: () => void;
+    onError: (errorOrCode?: Error) => void;
 }
 
 export function CommuteForm(props: CommuteFormProps) {
@@ -43,8 +43,12 @@ export function CommuteForm(props: CommuteFormProps) {
       duration: ((travelTimeMin || 5) * 60).toString(),
     });
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}` );
-    const podcastContent: any = await response.json();
-    setPodcastText(podcastContent.script);
+    const podcastContent: Record<string, any> = await response.json();
+    const { errorCode, script } = podcastContent;
+    if (errorCode) {
+      throw new Error(errorCode);
+    }
+    setPodcastText(script);
     onPodcastResponse(topic, travelTimeMin, podcastContent);
   }
 
@@ -54,9 +58,9 @@ export function CommuteForm(props: CommuteFormProps) {
       // await fetchCommuteTime();
       await generatePodcast();
 
-    } catch (e) {
+    } catch (e: any ) {
       console.error(e);
-      props.onError();
+      props.onError(e);
     } finally {
       onIsLoading(false);
     }
