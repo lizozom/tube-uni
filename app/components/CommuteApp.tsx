@@ -62,7 +62,7 @@ export function CommuteApp(props: CommuteAppProps) {
         topic={topic} 
         duration={travelTimeMin} 
         onBack={onBack} 
-        audio={podcastResponse.audio}>
+        audioFile={podcastResponse.audioFile}>
             
         </PlayScreen>
     )

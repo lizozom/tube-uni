@@ -2,9 +2,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { kv } from '@vercel/kv';
+import { TextToSpeechClient, v1beta1 } from '@google-cloud/text-to-speech';
+import { Storage } from '@google-cloud/storage';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
+
+const credentials = {
+  client_email: process.env.GOOGLE_ACCOUNT_EMAIL!,
+  private_key: process.env.GOOGLE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/g, '\n')
+}
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
 const model = genAI.getGenerativeModel({ 
@@ -16,6 +23,15 @@ const model = genAI.getGenerativeModel({
   { 
     apiVersion: 'v1beta' 
   });
+const ttsClient = new TextToSpeechClient({
+  credentials
+});
+const ttsLongClient = new v1beta1.TextToSpeechLongAudioSynthesizeClient({
+  credentials
+});
+const storageClient = new Storage({
+  credentials
+});
 
 const getTopics = async (topic: string, durationSec: number) => {
   const maxChapters = durationSec / 60;
@@ -81,7 +97,7 @@ const getAudio = async (script: string) => {
       name: "en-US-Studio-O"
     },
     audioConfig: {
-      audioEncoding: "LINEAR16",
+      audioEncoding: "LINEAR16" as any,
       effectsProfileId: [
         "small-bluetooth-speaker-class-device"
       ],
@@ -90,32 +106,61 @@ const getAudio = async (script: string) => {
     }
   };
 
-  const response = await fetch(`https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
-    method: 'POST',
-    body: JSON.stringify(request),
-  });
+  const response = await ttsClient.synthesizeSpeech(request);
 
-  const parsedResponse: any = await response.json();
-  return parsedResponse;
-
+  if (response && response[0] && response[0].audioContent) {
+    const audio: Buffer = response[0].audioContent as any as Buffer;
+    const audioString = audio.toString('base64');
+    return {
+      audioContent: audioString,
+    
+    };
+  } else {
+    throw new Error("Failed to generate audio");
+  }
 }
 
 const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const getAudioLong = async (script: string, topic: string) => {
+const getTodaysDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  return `${year}_${month}_${day}`;
+
+}
+
+const checkFileExists = async (fileName: string) => {
+  const bucket = storageClient.bucket("tube-uni-podcasts");
+  const resp = await  bucket.file(fileName).exists();
+  return resp[0];
+
+}
+
+const getAudioLong = async (script: string, topic: string, duration: number) => {
   return new Promise(async (resolve, reject) => {
+    const fileName = `${getTodaysDate()}_${topic.replace(/ /g, "_")}_${duration}.mp3`;
+    const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`;
+    const fileExists = await checkFileExists(`podcasts/${fileName}`);
+
+    if (fileExists) {
+      resolve(outputFileName);
+    }
+
     const request = {
-      parent: `projects/${process.env.GOOGLE_PROJECT}/locations/global`,
-      output_gcs_uri: `gs://tube-uni-podcasts/podcasts/${topic.replace(/ /g, "_")}_${new Date().getTime()}.mp3`,
+      parent: `projects/${process.env.GOOGLE_PROJECT_NUMBER}/locations/global`,
+      outputGcsUri: `gs://tube-uni-podcasts/podcasts/${fileName}`,
       input: {text: script},
       voice: {
         languageCode: "en-US",
         name: "en-US-Studio-O"
       },
       audioConfig: {
-        audioEncoding: "LINEAR16",
+        audioEncoding: "LINEAR16" as any,
         effectsProfileId: [
           "small-bluetooth-speaker-class-device"
         ],
@@ -126,33 +171,28 @@ const getAudioLong = async (script: string, topic: string) => {
 
 
     try {
-      const response = await fetch(`https://texttospeech.googleapis.com/v1beta1/projects/${process.env.GOOGLE_PROJECT}/locations/global:synthesizeLongAudio?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
-        method: 'POST',
-        body: JSON.stringify(request),
-      });
-      const parsedResponse: any = await response.json();
+      const response = await ttsLongClient.synthesizeLongAudio(request);
 
-      if (parsedResponse.name && parsedResponse.done === false) {
+      const [operation] = response;
+      if (operation && operation.name) {
 
         let counter = 0;
         do {
-          const checkDone = await fetch(`https://texttospeech.googleapis.com/v1beta1/${parsedResponse.name}?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
-            method: 'GET',
-          });
-          const checkDoneResponse: any = await checkDone.json();
-          counter++; // 'Invalid authentication from policy (go/gcs-rpc-sp): Rejected by impersonation_policy (attempt to impersonate cloud-ml-tts-frontend@prod.google.com -- if impersonation was unintentional, see go/dpci-faq#from-context-impersonation): Permission 'auth.impersonation.impersonateProdUser' not granted to cloud-tts-lrs-worker-composite@prod.google.com, because no ALLOW or ALLOW_WITH_LOG rule includes that permission.; RpcSecurityPolicy http://rpcsp/p/FdEbu-XK1Hsfp3UWaU6wj-nZYeP40BxIVKe7ZAu8W7g '
+          const checkDone = await ttsLongClient.checkSynthesizeLongAudioProgress(operation.name);
+          counter++; 
 
-          if (checkDoneResponse.done) {
-            if (checkDoneResponse.error) {
-              reject(checkDoneResponse.error);
+          if (checkDone.done) {
+            if (checkDone.error) {
+              reject(checkDone.error);
             }
-            resolve(checkDoneResponse);
+            const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`
+            resolve(outputFileName);
             break;
-          } else if (counter >= 20) {
+          } else if (counter >= 30) {
             reject("Audio generation took too long");
             break;
           } else {
-            await sleep(1000);
+            await sleep(1500);
           }
         } while (true);
       }
@@ -190,8 +230,8 @@ export async function GET(
   kv.set(key, response, { ex: 60 * 60 * 24 });
 
   console.log("Getting audio")
-  const audio = await getAudio(response.script.content);
-  response.audio = audio;
+  const fileName = await getAudioLong(response.script.content, topic, duration);
+  response.audioFile = fileName;
 
   return NextResponse.json(response);
 }

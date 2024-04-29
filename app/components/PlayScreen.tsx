@@ -5,57 +5,36 @@ import Image from "next/image";
 export interface PlayScreenProps {
   topic: string;
   duration: number;
-  audio: Record<string, any>;
+  audioFile: string;
   onBack: () => void;
 }
 
-function downloadAudio(name: string, mp3String: string) {
-  const byteCharacters = atob(mp3String);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: 'audio/mpeg' });
+function downloadAudio(name: string, fileName: string) {
+  // const byteCharacters = atob(mp3String);
+  // const byteNumbers = new Array(byteCharacters.length);
+  // for (let i = 0; i < byteCharacters.length; i++) {
+  //     byteNumbers[i] = byteCharacters.charCodeAt(i);
+  // }
+  // const byteArray = new Uint8Array(byteNumbers);
+  // const blob = new Blob([byteArray], { type: 'audio/mpeg' });
 
-  const url = URL.createObjectURL(blob);
+  // const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
+  a.href = fileName;
   a.download = `${name}.mp3`;
+  a.target = '_blank';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
 
-function playAudioString(mp3String: string) {
-  const byteCharacters = atob(mp3String);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: 'audio/mpeg' });
-
-  // Create a URL for the Blob
-  const blobUrl = URL.createObjectURL(blob);
-
-  // Create an audio element and set its source to the Blob URL
-  const audio = new Audio(blobUrl);
-
-  // Optionally, append the audio element to the DOM to play the audio
-  document.body.appendChild(audio);
-
-  audio.play();
-
-}
 
 export function PlayScreen(props: PlayScreenProps) {
-  const { topic, duration, audio, onBack } = props;
+  const { topic, duration, audioFile, onBack } = props;
 
   const playAudio = () => {
     // playAudioString(audio.audioContent);
-    downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audio.audioContent);  
+    downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);  
   }
   
   return (
