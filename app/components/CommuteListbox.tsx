@@ -17,9 +17,10 @@ export interface CommuteListboxProps {
 
 export default function CommuteListbox(props: CommuteListboxProps) {
     const [selectedMethod, setMethod] = useState(methods[0]);
+    const { onChange } = props;
 
     useEffect(() => {
-      props.onChange(selectedMethod);
+      onChange(selectedMethod);
     }, [selectedMethod]);
   
     return (

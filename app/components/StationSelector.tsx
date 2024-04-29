@@ -13,7 +13,7 @@ export interface StationSelectorListboxProps {
 }
 
 export default function StationSelector(props: StationSelectorListboxProps) {
-  const { stations, title } = props;
+  const { stations, title, onChange } = props;
   const [station, setStation] = useState<string>(props.station || '');
   const [query, setQuery] = useState('');
   const [placeholder, setPlaceholder] = useState('choose station');
@@ -30,7 +30,7 @@ export default function StationSelector(props: StationSelectorListboxProps) {
 
   useEffect(() => {
     if (station) {
-      props.onChange(station);
+      onChange(station);
     }
   }, [station]);
 
