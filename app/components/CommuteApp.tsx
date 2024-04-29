@@ -6,6 +6,7 @@ import { SplashScreen } from "./SplashScreen";
 import { LoadingScreen } from "./LoaderScreen";
 import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
+import { ErrorScreen } from "./ErrorScreen";
 
 
 export interface CommuteAppProps {
@@ -19,6 +20,7 @@ export function CommuteApp(props: CommuteAppProps) {
 
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const [travelTimeMin, setTravelTimeMin] = useState<number | undefined>(undefined);
   const [topic, setTopic] = useState<string>();
   const [podcastResponse, setPodcastResponse] = useState<any>();
@@ -37,6 +39,10 @@ export function CommuteApp(props: CommuteAppProps) {
     setIsLoading(isLoading);
   }
 
+  const onError = () => {
+    setIsError(true);
+  }
+
   const onPodcastResponse = (topic: string, duration: number, podcastResponse: any) => {
     setTopic(topic);
     setTravelTimeMin(duration);
@@ -45,6 +51,7 @@ export function CommuteApp(props: CommuteAppProps) {
 
   const onBack = () => {
     setTopic('');
+    setIsError(false);
     setTravelTimeMin(undefined);
     setPodcastResponse(undefined);
   }
@@ -67,6 +74,11 @@ export function CommuteApp(props: CommuteAppProps) {
     return (
       <LoadingScreen></LoadingScreen>
     )
+  } else if (isError) {
+    return (
+    <ErrorScreen
+      onBack={onBack} >
+      </ErrorScreen>);
   } else {
     return (
         <CommuteForm 
@@ -75,6 +87,7 @@ export function CommuteApp(props: CommuteAppProps) {
             placeholderTopic={placeholderTopic}
             onIsLoading={onIsLoading}
             onPodcastResponse={onPodcastResponse}
+            onError={onError}
         
         ></CommuteForm>
     );

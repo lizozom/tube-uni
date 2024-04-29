@@ -100,6 +100,70 @@ const getAudio = async (script: string) => {
 
 }
 
+const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const getAudioLong = async (script: string, topic: string) => {
+  return new Promise(async (resolve, reject) => {
+    const request = {
+      parent: `projects/${process.env.GOOGLE_PROJECT}/locations/global`,
+      output_gcs_uri: `gs://tube-uni-podcasts/podcasts/${topic.replace(/ /g, "_")}_${new Date().getTime()}.mp3`,
+      input: {text: script},
+      voice: {
+        languageCode: "en-US",
+        name: "en-US-Studio-O"
+      },
+      audioConfig: {
+        audioEncoding: "LINEAR16",
+        effectsProfileId: [
+          "small-bluetooth-speaker-class-device"
+        ],
+        pitch: 0,
+        speakingRate: 1
+      }
+    };
+
+
+    try {
+      const response = await fetch(`https://texttospeech.googleapis.com/v1beta1/projects/${process.env.GOOGLE_PROJECT}/locations/global:synthesizeLongAudio?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
+        method: 'POST',
+        body: JSON.stringify(request),
+      });
+      const parsedResponse: any = await response.json();
+
+      if (parsedResponse.name && parsedResponse.done === false) {
+
+        let counter = 0;
+        do {
+          const checkDone = await fetch(`https://texttospeech.googleapis.com/v1beta1/${parsedResponse.name}?key=${process.env.GOOGLE_MAPS_API_KEY}`, {
+            method: 'GET',
+          });
+          const checkDoneResponse: any = await checkDone.json();
+          counter++; // 'Invalid authentication from policy (go/gcs-rpc-sp): Rejected by impersonation_policy (attempt to impersonate cloud-ml-tts-frontend@prod.google.com -- if impersonation was unintentional, see go/dpci-faq#from-context-impersonation): Permission 'auth.impersonation.impersonateProdUser' not granted to cloud-tts-lrs-worker-composite@prod.google.com, because no ALLOW or ALLOW_WITH_LOG rule includes that permission.; RpcSecurityPolicy http://rpcsp/p/FdEbu-XK1Hsfp3UWaU6wj-nZYeP40BxIVKe7ZAu8W7g '
+
+          if (checkDoneResponse.done) {
+            if (checkDoneResponse.error) {
+              reject(checkDoneResponse.error);
+            }
+            resolve(checkDoneResponse);
+            break;
+          } else if (counter >= 20) {
+            reject("Audio generation took too long");
+            break;
+          } else {
+            await sleep(1000);
+          }
+        } while (true);
+      }
+
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+
 export async function GET(
   req: NextRequest
 ) {
@@ -108,7 +172,7 @@ export async function GET(
   const duration = Number(searchParams.get('duration') || 60 * 5);
 
   const key = `${topic.toLowerCase()}-${duration}`;
-  const cached = undefined;// await kv.get(key);
+  const cached = await kv.get(key);
 
   let response: any = {};
   if (cached) {

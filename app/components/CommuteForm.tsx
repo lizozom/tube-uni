@@ -13,6 +13,7 @@ export interface CommuteFormProps {
     placeholderTopic: string;
     onIsLoading: (isLoading: boolean) => void;
     onPodcastResponse: (topic: string, duration: number, podcastResponse: any) => void;
+    onError: () => void;
 }
 
 export function CommuteForm(props: CommuteFormProps) {
@@ -54,7 +55,8 @@ export function CommuteForm(props: CommuteFormProps) {
       await generatePodcast();
 
     } catch (e) {
-
+      console.error(e);
+      props.onError();
     } finally {
       onIsLoading(false);
     }
