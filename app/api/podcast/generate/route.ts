@@ -77,6 +77,7 @@ const getScript = async (topic: string, duration: number, titlesObj: Record<stri
     Start the podcast by saying "This is Tube Uni. You are listening to your very own podcast about ${topic} . Have a pleasant commute and enjoy your listening!".
     INclude a short introduction about the topic.
     Include a short outro about the topic.
+    Don't use asterixes or any other special characters for formatting.
     Don't add comments or staging instructions.
     Don't write "Host:" or "Guest:".
     If you want to add music, add a <MUSIC> tag.
@@ -192,7 +193,7 @@ const getAudioLong = async (script: string, topic: string, duration: number) => 
             const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`
             resolve(outputFileName);
             break;
-          } else if (counter >= 30) {
+          } else if (counter >= 50) {
             reject("Audio generation took too long");
             break;
           } else {

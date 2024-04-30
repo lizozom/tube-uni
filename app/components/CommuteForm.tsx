@@ -42,7 +42,12 @@ export function CommuteForm(props: CommuteFormProps) {
       topic: topic.trim().toLowerCase(),
       duration: ((travelTimeMin || 5) * 60).toString(),
     });
-    const response: any = await fetch(`/api/podcast/generate?${params.toString()}` );
+
+    // 1.5 minute timer
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 90000)
+    const response: any = await fetch(`/api/podcast/generate?${params.toString()}`, {signal: controller.signal} );
+    clearTimeout(timeoutId);
     const podcastContent: Record<string, any> = await response.json();
     const { errorCode, script } = podcastContent;
     if (errorCode) {

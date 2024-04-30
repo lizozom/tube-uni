@@ -12,7 +12,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
 
   let errMsg = (
     <>
-      <span className="text-2xl text-center items-center">it's not you, it's us but<br/>somthing went wrong.</span>
+      <span className="text-2xl text-center items-center">it's not you, it's us but<br/>something went wrong.</span>
       <span className="text-2xl text-center items-center">we're sorry</span>
     </>
   );
