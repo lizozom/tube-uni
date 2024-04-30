@@ -13,8 +13,10 @@ const model = genAI.getGenerativeModel({
   { 
     apiVersion: 'v1beta' 
   });
+
+const apiKey = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey,
 });
 
 
