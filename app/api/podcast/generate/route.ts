@@ -148,7 +148,7 @@ const checkFileExists = async (fileName: string) => {
 
 const getAudioLong = async (script: string, topic: string, duration: number) => {
   return new Promise(async (resolve, reject) => {
-    const fileName = `${getTodaysDate()}_${topic.replace(/ /g, "_")}_${duration}.mp3`;
+    const fileName = `${topic.replace(/ /g, "_")}_${duration}.mp3`;
     const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`;
     const fileExists = await checkFileExists(`podcasts/${fileName}`);
 
