@@ -20,8 +20,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
   if (errorOrCode?.message === "400") {
     errMsg = (
       <>
-        <span className="text-2xl text-center items-center">it seems we could create </span>
-        <span className="text-2xl text-center items-center">a good podcast on this topic</span>
+        <span className="text-2xl text-center items-center">it seems we could not create<br/>a good podcast on this topic</span>
       </>
     )
   }
