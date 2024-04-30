@@ -68,7 +68,7 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
               const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`
               resolve(outputFileName);
               break;
-            } else if (counter >= 50) {
+            } else if (counter >= 80) {
               reject("Audio generation took too long");
               break;
             } else {

@@ -32,7 +32,7 @@ export default function StationSelector(props: StationSelectorListboxProps) {
     if (station) {
       onChange(station);
     }
-  }, [station]);
+  }, [station, onChange]);
 
   const onFocus = () => {
     setPlaceholder('');

@@ -13,7 +13,9 @@ const model = genAI.getGenerativeModel({
   { 
     apiVersion: 'v1beta' 
   });
-const openai = new OpenAI();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
 
 
 const getContentGemini = async (prompt: string) => {

@@ -21,7 +21,7 @@ export default function CommuteListbox(props: CommuteListboxProps) {
 
     useEffect(() => {
       onChange(selectedMethod);
-    }, [selectedMethod]);
+    }, [selectedMethod, onChange]);
   
     return (
       <Listbox value={selectedMethod} onChange={setMethod}>
