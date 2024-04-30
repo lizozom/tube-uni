@@ -12,7 +12,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
 
   let errMsg = (
     <>
-      <span className="text-2xl text-center items-center">it's not you, it's us but<br/>something went wrong.</span>
+      <span className="text-2xl text-center items-center">it's not you, it's us<br/>but something went wrong.</span>
       <span className="text-2xl text-center items-center">we're sorry</span>
     </>
   );
@@ -20,8 +20,8 @@ export function ErrorScreen(props: ErrorScreenProps) {
   if (errorOrCode?.message === "400") {
     errMsg = (
       <>
-        <span className="text-2xl text-center items-center">this type of content is not supported.</span>
-        <span className="text-2xl text-center items-center">please try again</span>
+        <span className="text-2xl text-center items-center">it seems we could create </span>
+        <span className="text-2xl text-center items-center">a good podcast on this topic</span>
       </>
     )
   }
