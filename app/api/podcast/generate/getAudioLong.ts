@@ -47,10 +47,7 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
           pitch: 0,
           speakingRate: 1
         }
-      };
-
-      console.log(request)
-  
+      };  
   
       try {
         const response = await ttsLongClient.synthesizeLongAudio(request);
