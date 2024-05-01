@@ -40,7 +40,7 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
           name: "en-US-Studio-O"
         },
         audioConfig: {
-          audioEncoding: "LINEAR16" as any,
+          audioEncoding: "MP3" as any,
           effectsProfileId: [
             "small-bluetooth-speaker-class-device"
           ],
@@ -48,6 +48,8 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
           speakingRate: 1
         }
       };
+
+      console.log(request)
   
   
       try {
