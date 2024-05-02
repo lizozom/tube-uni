@@ -66,7 +66,7 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
               }
               resolve(outputFileName);
               break;
-            } else if (counter >= 80) {
+            } else if (counter >= 100) {
               reject("Audio generation took too long");
               break;
             } else {
