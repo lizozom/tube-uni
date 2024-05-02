@@ -20,8 +20,12 @@ const openai = new OpenAI({
 });
 
 
-const getContentGemini = async (prompt: string) => {
-    const result = await model.generateContent(prompt);
+const getContentGemini = async (prompt: string, context: string[]) => {
+    const result = await model.generateContent(`
+    ${prompt}
+    Here is some additional context: ${context.join("\n\n")}
+    `
+    );
     const response = await result.response;
     return response.text()
   }
@@ -35,19 +39,20 @@ const getContentGemini = async (prompt: string) => {
     return completion.choices[0].message.content;
   }
   
-  export const getContent = async (prompt: string): Promise<string | null> => {
+  export const getContent = async (prompt: string, context: string[]): Promise<string | null> => {
     try {
       const activeModel = await kv.get("active-model");
   
+      // This is a fallback for when Gemini returns 429 errors
       if (activeModel === "openai") {
         return await getContentOpenAI(prompt);
       } else {
-        return await getContentGemini(prompt);
+        return await getContentGemini(prompt, context);
       }
     } catch (e: any) {
         if (e.message.indexOf(429) > -1) {
             await kv.set("active-model", "openai", { ex: 1000 * 60 * 60 * 24 });
-            return getContent(prompt);
+            return getContent(prompt, context);
         } else {
             throw e;
         }

@@ -23,11 +23,8 @@ const getTopics = async (topic: string, durationSec: number, context: string[]) 
       "description": "..."
     },
     IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
-
-    Here is some context to help you:
-    ${context.join("\n")}
   `
-  const text = await getContent(prompt);
+  const text = await getContent(prompt, context);
   if (!text) {
     throw new Error("Failed to get script");
   }
@@ -50,9 +47,6 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       Don't use asterixes or any other special characters for formatting.
       Don't add comments or staging instructions.
       Don't write "Host:" or "Guest:".
-
-      Here is some context to help you:
-      ${context.join("\n")}
   `;
 
   for (let i = 0; i < topicsArr.length; i++) {  
@@ -80,7 +74,7 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       ${commonPromptPart}
     `;
     }
-    let text = await getContent(prompt);
+    let text = await getContent(prompt, context);
     if (!text) {
       throw new Error("Failed to get script chunk");
     }
