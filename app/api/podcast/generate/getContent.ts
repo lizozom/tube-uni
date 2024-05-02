@@ -23,7 +23,7 @@ const openai = new OpenAI({
 const getContentGemini = async (prompt: string, context: string[]) => {
     const result = await model.generateContent(`
     ${prompt}
-    Here is some additional context: ${context.join("\n\n")}
+    ${context && context.length ? `Here is some additional context: ${context.join("\n\n")}` : ''}
     `
     );
     const response = await result.response;
@@ -39,7 +39,7 @@ const getContentGemini = async (prompt: string, context: string[]) => {
     return completion.choices[0].message.content;
   }
   
-  export const getContent = async (prompt: string, context: string[]): Promise<string | null> => {
+  export const getContent = async (prompt: string, context: string[] = []): Promise<string | null> => {
     try {
       const activeModel = await kv.get("active-model");
   
