@@ -34,12 +34,10 @@ const getTopics = async (topic: string, durationSec: number, context: string[]) 
   try {
     return JSON.parse(text.replace('```json', '').replace('```', ''));
   } catch (e) {
-    if (e instanceof SyntaxError) {
-      console.error(e)
-      return { error: "Failed to parse JSON" };
-    } else {
-      throw e;
-    }
+    console.error(text);
+    console.error(e)
+    throw e;
+  
   }  
 }
 
