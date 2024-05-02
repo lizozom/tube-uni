@@ -20,7 +20,14 @@ const topics = [
   'who invented peanut butter',
   'star ratings of hotels',
   // 'color blind animals',
-  'the story of fabergé eggs'
+  'the story of fabergé eggs',
+  'how do countries mark their borders',
+  'what\'s the difference between a planet and a star',
+  'what is my body actually made of',
+  'how were zodiac signs created',
+  'why people care about gold',
+  'why the mona lisa is so famous',
+  'how long do animals sleep',
 ]
 
 
