@@ -1,5 +1,10 @@
 {
- "name": "App",
+ "name": "Tube Uni",
+ "author": "Amos Meron & Liza Katz",
+ "developer": {
+    "name": "Liza Katz",
+    "url": "https://www.linkedin.com/in/lizak/"
+  },
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
@@ -37,5 +42,11 @@
    "type": "image\/png",
    "density": "4.0"
   }
- ]
+ ],
+ "theme": {
+    "colors": {
+      "frame": "#FCE8C3",
+      "tab_background_text": "#FCE8C3"
+    }
+  }
 }
