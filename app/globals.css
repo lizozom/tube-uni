@@ -79,6 +79,10 @@ li.selected {
 }
 
 body {
+  background-color: black;
+}
+
+.page-wrapper {
   color: var(--font-color-main);
   background: var(--foreground);
 }
@@ -110,4 +114,12 @@ body {
 .animate-width {
   animation: expandWidth 10s linear infinite;
   -webkit-animation: expandWidth 10s linear infinite;
+}
+
+@media only screen and (min-width: 768px) {
+
+  .page-wrapper {
+    width:60vh; 
+    margin: auto;
+  }
 }
