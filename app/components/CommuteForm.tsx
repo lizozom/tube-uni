@@ -43,9 +43,9 @@ export function CommuteForm(props: CommuteFormProps) {
       duration: ((travelTimeMin || 5) * 60).toString(),
     });
 
-    // 2 minute timer
+    // 3 minute timer
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 120000)
+    const timeoutId = setTimeout(() => controller.abort(), 180000)
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}`, {signal: controller.signal} );
     clearTimeout(timeoutId);
     const podcastContent: Record<string, any> = await response.json();
