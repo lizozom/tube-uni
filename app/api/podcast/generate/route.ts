@@ -4,13 +4,14 @@ import { kv } from '@vercel/kv';
 import { getContent } from './getContent';
 import { getAudioLong } from './getAudioLong';
 import { moderate } from './moderate';
+import { fetchContext } from './fetchContext';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 // Helper functions
 
-const getTopics = async (topic: string, durationSec: number) => {
+const getTopics = async (topic: string, durationSec: number, context: string[]) => {
   const durationOnlyContent = durationSec - 60 - 60; // intro and outro
   const maxChapters = Math.floor(durationOnlyContent / (60 * 3));
   const prompt = `
@@ -22,6 +23,9 @@ const getTopics = async (topic: string, durationSec: number) => {
       "description": "..."
     },
     IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
+
+    Here is some context to help you:
+    ${context.join("\n")}
   `
   const text = await getContent(prompt);
   if (!text) {
@@ -39,7 +43,7 @@ const getTopics = async (topic: string, durationSec: number) => {
   }  
 }
 
-const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>) => {
+const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>, context: string[]) => {
   const scriptChunks = [];
   const wordsPerMinute = 160;
   const desiredWords = duration / 60 * wordsPerMinute;
@@ -48,6 +52,9 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       Don't use asterixes or any other special characters for formatting.
       Don't add comments or staging instructions.
       Don't write "Host:" or "Guest:".
+
+      Here is some context to help you:
+      ${context.join("\n")}
   `;
 
   for (let i = 0; i < topicsArr.length; i++) {  
@@ -105,18 +112,21 @@ export async function GET(
   }
 
   const key = `${topic.toLowerCase()}-${duration}`;
-  const cached =  await kv.get(key);
+  const cached =  undefined;//await kv.get(key);
 
   let response: any = {};
   if (cached) {
     response = cached;
   } else {
+    console.log("Getting context");
+    const context = await fetchContext(topic);
+    console.log(`Got context with ${context.length} items`);
     console.log("Getting topics");
-    const topics = await getTopics(topic, duration);
+    const topics = await getTopics(topic, duration, context);
     console.log(topics)
     console.log("Getting script")
     // const script = await getScript(topic, duration, {});
-    const script = await getScriptByTopics(topic, duration, topics);
+    const script = await getScriptByTopics(topic, duration, topics, context);
     response = {
       topics,
       script
