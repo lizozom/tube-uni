@@ -24,7 +24,7 @@ const sleep = (ms: number) => {
 export const getAudioLong = async (script: string, topic: string, duration: number) => {
     return new Promise(async (resolve, reject) => {
       const fileName = `${topic.replace(/ /g, "_")}_${duration}.mp3`;
-      const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`;
+      const outputFileName = `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`;
       const fileExists = await checkFileExists(`podcasts/${fileName}`);
   
       if (fileExists) {
@@ -64,7 +64,6 @@ export const getAudioLong = async (script: string, topic: string, duration: numb
               if (checkDone.error) {
                 reject(checkDone.error);
               }
-              const outputFileName = `https://storage.cloud.google.com/tube-uni-podcasts/podcasts/${fileName}`
               resolve(outputFileName);
               break;
             } else if (counter >= 80) {
