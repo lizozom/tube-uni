@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { track } from '@vercel/analytics';
 
 export interface PlayScreenProps {
   topic: string;
@@ -34,6 +35,7 @@ export function PlayScreen(props: PlayScreenProps) {
 
   const playAudio = () => {
     // playAudioString(audio.audioContent);
+    track('download', { topic: topic || '' });
     downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);  
   }
   

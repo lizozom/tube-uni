@@ -3,6 +3,7 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { track } from '@vercel/analytics';
 
 export interface SplashScreenProps {
   onClick: () => void;
@@ -16,6 +17,7 @@ export function SplashScreen(props: SplashScreenProps) {
   }, []);
 
   const onClick = () => {
+    track('splashScreenClick');
     props.onClick();
   }
   

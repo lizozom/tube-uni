@@ -7,6 +7,7 @@ import { LoadingScreen } from "./LoaderScreen";
 import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
+import { track } from '@vercel/analytics';
 
 
 export interface CommuteAppProps {
@@ -52,6 +53,7 @@ export function CommuteApp(props: CommuteAppProps) {
   }
 
   const onBack = () => {
+    track('backButtonClick');
     setTopic('');
     setIsError(false);
     setErrorOrCode(undefined);

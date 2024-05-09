@@ -6,6 +6,7 @@ import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js"
 import { TubeStation } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
+import { track } from '@vercel/analytics';
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
@@ -59,11 +60,14 @@ export function CommuteForm(props: CommuteFormProps) {
 
   const onClick = async () => {
     onIsLoading(true);
+    track('generateStart', { topic: topic || '' });
     try {
       // await fetchCommuteTime();
       await generatePodcast();
+      track('generateComplete', { topic: topic || '' });
 
     } catch (e: any ) {
+      track('generateError', { topic: topic || '' });
       console.error(e);
       props.onError(e);
     } finally {
@@ -72,7 +76,9 @@ export function CommuteForm(props: CommuteFormProps) {
   }
 
   const loadTitle = () => {
-    setTopic(topics[Math.floor(Math.random() * topics.length)]);
+    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    track('loadTitle', { type: 'random', topic: randomTopic })
+    setTopic(randomTopic);
   }
 
   const handleStartStationChange = (station: string) => {
@@ -84,6 +90,7 @@ export function CommuteForm(props: CommuteFormProps) {
   }
 
   const handleTravelTimeChange = (time: number | undefined) => {
+    track('travelTimeChange', { time: time || '' });
     setTravelTimeMin(time);
   }
 
