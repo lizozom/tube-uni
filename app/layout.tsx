@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import { Analytics } from "@vercel/analytics/react"
+import { inject } from '@vercel/analytics';
+ inject({ mode: process.env.VERCEL_ENV === "development" ? 'development' : 'production' });
 
 import { Young_Serif } from 'next/font/google'
 
@@ -29,6 +32,7 @@ export default function RootLayout({
       <body className={youngSerif.className}>
         <div className="page-wrapper real-100vh">
         {children}
+        <Analytics/>
         </div>
         </body>
     </html>
