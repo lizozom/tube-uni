@@ -3,6 +3,7 @@ import { Storage } from '@google-cloud/storage';
 import { v1beta1 } from '@google-cloud/text-to-speech';
 import { credentials } from './credentials';
 import OpenAI from "openai";
+import { ScriptResponse } from './types';
 
 const apiKey = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({
@@ -31,12 +32,12 @@ const sleep = (ms: number) => {
 
 
 
-const getAudioLongGcp = async (script: string, fileName: string) => {
+const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
   return new Promise(async (resolve, reject) => {
     const request = {
       parent: `projects/${process.env.GOOGLE_PROJECT_NUMBER}/locations/global`,
       outputGcsUri: `${GS_PATH}${fileName}`,
-      input: { text: script },
+      input: { text: script.content },
       voice: {
         languageCode: "en-US",
         name: "en-US-Studio-O"
@@ -83,17 +84,25 @@ const getAudioLongGcp = async (script: string, fileName: string) => {
   });
 }
 
-const getAudioLongOpenAI = async (script: string, fileName: string) => {
-  const mp3 = await openai.audio.speech.create({
-    model: "tts-1",
-    voice: "nova",
-    input: script,
-  });
-  const buffer = Buffer.from(await mp3.arrayBuffer());
-  storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(buffer);
+const getAudioLongOpenAI = async (script: ScriptResponse, fileName: string) => {
+  const mp3Chunks = [];
+  for (let i = 0; i < script.chunks.length; i++) {
+    const chunk = script.chunks[i];
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "nova",
+      input: chunk,
+    });
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+    mp3Chunks.push(buffer);
+    console.log(`Chunk ${i} audio done`);
+  }
+
+  const combinedBuffer = Buffer.concat(mp3Chunks);
+  storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(combinedBuffer);
 }
 
-export const getAudioLong = async (script: string, topic: string, duration: number) => {
+export const getAudioLong = async (script: ScriptResponse, topic: string, duration: number) => {
   return new Promise(async (resolve, reject) => {
 
     const fileName = `${topic.replace(/ /g, "_")}_${duration}.mp3`;

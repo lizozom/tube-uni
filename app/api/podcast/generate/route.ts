@@ -5,10 +5,10 @@ import { getContent } from './getContent';
 import { getAudioLong } from './getAudioLong';
 import { moderate } from './moderate';
 import { fetchContext } from './fetchContext';
+import { ScriptResponse } from './types';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
-
 // Helper functions
 
 const getTopics = async (topic: string, durationSec: number, context: string[]) => {
@@ -80,14 +80,16 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
     }
     text = text.replace(/<MUSIC>/g, "");
     scriptChunks.push(text);
+    console.log(`Chunk ${i} text done`);
   }
 
   const script = scriptChunks.join('\n');
 
   console.log(`Script length is ${script.split(" ").length}. Asked for ${duration/60*160}`)
   return {
-    content: script
-  };
+    content: script,
+    chunks: scriptChunks
+  } as ScriptResponse;
 }
 
 export async function GET(
@@ -128,7 +130,7 @@ export async function GET(
   kv.set(key, response, { ex: 60 * 60 * 24 });
 
   console.log("Getting audio")
-  const fileName = await getAudioLong(response.script.content, topic, duration);
+  const fileName = await getAudioLong(response.script, topic, duration);
   response.audioFile = fileName;
 
   return NextResponse.json(response);
