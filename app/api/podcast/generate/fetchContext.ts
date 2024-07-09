@@ -37,7 +37,7 @@ export const fetchContext = async (topic: string) => {
 
         }
     } catch (e) {
-        console.error(e);
+        console.error(e.message);
     }
 
     console.log(`Context from pages: ${processedPages}`);

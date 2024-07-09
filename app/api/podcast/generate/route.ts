@@ -39,7 +39,6 @@ const getTopics = async (topic: string, durationSec: number, context: string[]) 
 }
 
 const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>, context: string[]) => {
-  const scriptChunks = [];
   const wordsPerMinute = 160;
   const desiredWords = duration / 60 * wordsPerMinute;
   const desiredChunkLength = Math.floor((desiredWords - 2 * wordsPerMinute) / (topicsArr.length - 2));
@@ -49,6 +48,7 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       Don't write "Host:" or "Guest:".
   `;
 
+  const promptPromises: Array<Promise<string>> = []
   for (let i = 0; i < topicsArr.length; i++) {  
     const info = topicsArr[i];
     let prompt: string = '';
@@ -74,15 +74,19 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       ${commonPromptPart}
     `;
     }
-    let text = await getContent(prompt, context);
-    if (!text) {
-      throw new Error("Failed to get script chunk");
-    }
-    text = text.replace(/<MUSIC>/g, "");
-    scriptChunks.push(text);
-    console.log(`Chunk ${i} text done`);
-  }
 
+    const startTime = performance.now();
+    promptPromises.push(getContent(prompt, context).then((text) => {
+      console.log(`Got prompt ${i}, took ${performance.now() - startTime}ms`);
+      if (!text) {
+        throw new Error("Failed to get script chunk");
+      }
+      text = text?.replace(/<MUSIC>/g, "") || '';
+      return text;
+    }));
+  }
+  
+  const scriptChunks = await Promise.all(promptPromises);
   const script = scriptChunks.join('\n');
 
   console.log(`Script length is ${script.split(" ").length}. Asked for ${duration/60*160}`)
@@ -107,20 +111,27 @@ export async function GET(
 
   const key = `${topic.toLowerCase()}-${duration}`;
   const cached =  undefined;//await kv.get(key);
+  let startTime = performance.now();
 
   let response: any = {};
   if (cached) {
     response = cached;
   } else {
     console.log("Getting context");
+    startTime = performance.now();
     const context = await fetchContext(topic);
-    console.log(`Got context with ${context.length} items`);
+    console.log(`Got context with ${context.length} items, took ${performance.now() - startTime}ms`);
+
     console.log("Getting topics");
+    startTime = performance.now();
     const topics = await getTopics(topic, duration, context);
-    console.log(topics)
+    console.log(`Got topics with ${topics.length} items, took ${performance.now() - startTime}ms`)
+
     console.log("Getting script")
+    startTime = performance.now();
     // const script = await getScript(topic, duration, {});
     const script = await getScriptByTopics(topic, duration, topics, context);
+    console.log(`Got script, took ${performance.now() - startTime}ms`);
     response = {
       topics,
       script
@@ -130,8 +141,10 @@ export async function GET(
   kv.set(key, response, { ex: 60 * 60 * 24 });
 
   console.log("Getting audio")
+  startTime = performance.now();
   const fileName = await getAudioLong(response.script, topic, duration);
   response.audioFile = fileName;
+  console.log(`Got audio, took ${performance.now() - startTime}ms`);
 
   return NextResponse.json(response);
 }

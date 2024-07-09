@@ -31,7 +31,6 @@ const sleep = (ms: number) => {
 }
 
 
-
 const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
   return new Promise(async (resolve, reject) => {
     const request = {
@@ -85,22 +84,40 @@ const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
 }
 
 const getAudioLongOpenAI = async (script: ScriptResponse, fileName: string) => {
-  const mp3Chunks = [];
+  const mp3Promises = [];
+  const mp3Chunks: Array<Buffer> = [];
+
   for (let i = 0; i < script.chunks.length; i++) {
     const chunk = script.chunks[i];
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1",
-      voice: "nova",
-      input: chunk,
-    });
-    const buffer = Buffer.from(await mp3.arrayBuffer());
-    mp3Chunks.push(buffer);
-    console.log(`Chunk ${i} audio done`);
+    const startTime = performance.now();
+    
+    mp3Promises.push(
+      openai.audio.speech.create({
+        model: "tts-1",
+        voice: "nova",
+        input: chunk,
+      })
+      .then(response => response.arrayBuffer())
+      .then(response => {
+        console.log(`Chunk ${i} audio done, took ${performance.now() - startTime}ms`);
+        return response;
+      })
+    );
+  }
+
+  const responses = await Promise.all(mp3Promises);
+
+  for (let i = 0; i < responses.length; i++) {
+    const mp3Buffer = responses[i];
+    mp3Chunks.push(Buffer.from(mp3Buffer));
   }
 
   const combinedBuffer = Buffer.concat(mp3Chunks);
+  
+  // Save the combined buffer to the storage bucket
   storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(combinedBuffer);
 }
+
 
 export const getAudioLong = async (script: ScriptResponse, topic: string, duration: number) => {
   return new Promise(async (resolve, reject) => {

@@ -18,8 +18,8 @@ export const moderate = async (topic: string): Promise<boolean> => {
   console.log("Running moderation")
   if (moderationResponse && moderationResponse.moderationCategories) {
     for (let category of moderationResponse.moderationCategories) {
-      if (category.confidence && category.confidence > 0.3) {
-        console.log(`Content is flagged as ${category.name}`);
+      if (category.confidence && category.confidence > 0.7) {
+        console.log(`Content ${topic} is flagged as ${category.name}`);
         return false;
       }
     }
