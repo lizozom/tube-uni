@@ -111,27 +111,41 @@ const getAudioLongOpenAI = async (script: ScriptResponse, fileName: string) => {
   const combinedBuffer = Buffer.concat(responses);
   
   // Save the combined buffer to the storage bucket
-  storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(combinedBuffer);
+  await storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(combinedBuffer);
 }
 
+export const getAudioFilename = (topic: string, duration: number) => {
+  return `${topic.replace(/ /g, "_")}_${duration}.mp3`;
+}
+
+export const checkAudioExists = async (topic: string, duration: number) => {
+  const fileName = getAudioFilename(topic, duration);
+  return checkFileExists(`podcasts/${fileName}`);
+}
+
+export const getAudioUrl = (topic: string, duration: number) => {
+  const fileName = getAudioFilename(topic, duration);
+  return `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`;
+}
 
 export const getAudioLong = async (script: ScriptResponse, topic: string, duration: number) => {
   return new Promise(async (resolve, reject) => {
 
-    const fileName = `${topic.replace(/ /g, "_")}_${duration}.mp3`;
-    const outputUrl = `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`;
-    const fileExists = await checkFileExists(`podcasts/${fileName}`);
+    const fileName = getAudioFilename(topic, duration);
+    const outputUrl = getAudioUrl(topic, duration);
+    const fileExists = await checkAudioExists(topic, duration);
 
     if (fileExists) {
       resolve(outputUrl);
-    }
-
-    if (process.env.TTS_PROVIDER === "openai") {
-      await getAudioLongOpenAI(script, fileName);
-      resolve(outputUrl);
     } else {
-      await getAudioLongGcp(script, fileName);
-      resolve(outputUrl);
+      console.log(`Generating audio for ${topic} with duration ${duration}`);
+      if (process.env.TTS_PROVIDER === "openai") {
+        await getAudioLongOpenAI(script, fileName);
+        resolve(outputUrl);
+      } else {
+        await getAudioLongGcp(script, fileName);
+        resolve(outputUrl);
+      }
     }
   });
 }

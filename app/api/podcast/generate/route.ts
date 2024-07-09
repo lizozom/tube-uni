@@ -110,11 +110,12 @@ export async function GET(
   }
 
   const key = `${topic.toLowerCase()}-${duration}`;
-  const cached =  undefined;//await kv.get(key);
+  const cached =  process.env.CACHE_ACTIVE ? await kv.get(key) : false;
   let startTime = performance.now();
 
   let response: any = {};
   if (cached) {
+    console.log(`Cached response: ${key}`);
     response = cached;
   } else {
     try {
