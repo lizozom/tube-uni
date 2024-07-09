@@ -36,7 +36,7 @@ export const fetchContext = async (topic: string) => {
             }
 
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error(e.message);
     }
 
