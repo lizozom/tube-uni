@@ -117,34 +117,44 @@ export async function GET(
   if (cached) {
     response = cached;
   } else {
-    console.log("Getting context");
-    startTime = performance.now();
-    const context = await fetchContext(topic);
-    console.log(`Got context with ${context.length} items, took ${performance.now() - startTime}ms`);
+    try {
+      console.log("Getting context");
+      startTime = performance.now();
+      const context = await fetchContext(topic);
+      console.log(`Got context with ${context.length} items, took ${performance.now() - startTime}ms`);
 
-    console.log("Getting topics");
-    startTime = performance.now();
-    const topics = await getTopics(topic, duration, context);
-    console.log(`Got topics with ${topics.length} items, took ${performance.now() - startTime}ms`)
+      console.log("Getting topics");
+      startTime = performance.now();
+      const topics = await getTopics(topic, duration, context);
+      console.log(`Got topics with ${topics.length} items, took ${performance.now() - startTime}ms`)
 
-    console.log("Getting script")
-    startTime = performance.now();
-    // const script = await getScript(topic, duration, {});
-    const script = await getScriptByTopics(topic, duration, topics, context);
-    console.log(`Got script, took ${performance.now() - startTime}ms`);
-    response = {
-      topics,
-      script
-    };
+      console.log("Getting script")
+      startTime = performance.now();
+      // const script = await getScript(topic, duration, {});
+      const script = await getScriptByTopics(topic, duration, topics, context);
+      console.log(`Got script, took ${performance.now() - startTime}ms`);
+      response = {
+        topics,
+        script
+      };
+    } catch (e) {
+      console.error(e);
+      return NextResponse.json({ msg: "Failed to generate script", errorCode: 500 });
+    }
   }
 
   kv.set(key, response, { ex: 60 * 60 * 24 });
 
   console.log("Getting audio")
-  startTime = performance.now();
-  const fileName = await getAudioLong(response.script, topic, duration);
-  response.audioFile = fileName;
-  console.log(`Got audio, took ${performance.now() - startTime}ms`);
+  try {
+    startTime = performance.now();
+    const fileName = await getAudioLong(response.script, topic, duration);
+    response.audioFile = fileName;
+    console.log(`Got audio, took ${performance.now() - startTime}ms`);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ msg: "Failed to generate script", errorCode: 500 });
+  }
 
   return NextResponse.json(response);
 }
