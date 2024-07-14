@@ -105,8 +105,17 @@ export async function GET(
   req: NextRequest
 ) {
   const { searchParams } = req.nextUrl;
-  const topic = (searchParams.get('topic') || "This history of London").trim();
+  const topic = (searchParams.get('topic') || "This history of London")
+    .trim()
+    .replace(/[^a-zA-Z0-9 ]/g, "");
   const duration = Number(searchParams.get('duration') || 60 * 5);
+
+  if (topic.length < 3 || topic.length > 200) {
+    console.error(`Invalid topic length: ${topic} (${topic.length})`);
+    return NextResponse.json({ errorCode: 400 });
+  }
+
+  console.log(`Generating podcast for ${topic} with duration ${duration}`);
 
   const topicOk = await moderate(topic);
 
