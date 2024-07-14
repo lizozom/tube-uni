@@ -11,7 +11,7 @@ export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 // Helper functions
 
-const getTopics = async (topic: string, durationSec: number, context: string[]) => {
+const getTopics = async (topic: string, durationSec: number, context: string[], retry: boolean = false) => {
   const durationOnlyContent = durationSec - 60 - 60; // intro and outro
   const maxChapters = Math.floor(durationOnlyContent / (60 * 3));
   const prompt = `
@@ -31,9 +31,14 @@ const getTopics = async (topic: string, durationSec: number, context: string[]) 
   try {
     return JSON.parse(text.replace('```json', '').replace('```', ''));
   } catch (e) {
-    console.error(text);
-    console.error(e)
-    throw e;
+    if (!retry && e instanceof SyntaxError) {
+      console.warn("Failed to parse JSON, retrying generation");
+      return getTopics(topic, durationSec, context, true);
+    } else {
+      console.error(text);
+      console.error(e)
+      throw e;
+    }
   
   }  
 }

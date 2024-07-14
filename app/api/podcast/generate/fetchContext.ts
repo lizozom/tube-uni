@@ -9,7 +9,7 @@ const getWikiContent = async (topic: string) => {
     }
 }
 
-export const fetchContext = async (topic: string) => {
+export const fetchContext = async (topic: string, retry: boolean = false): Promise<Array<string>> => {
     const relavantWikiTopicsPrompt = `
         Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". Return the response as a JSON list.
         The list should only contain the topics, for example: ["Topic A", "Topic B", "Topic C"].
@@ -22,7 +22,7 @@ export const fetchContext = async (topic: string) => {
         const relevantWikiTopicsStr = await getContent(relavantWikiTopicsPrompt);
         if (relevantWikiTopicsStr) {
             const relevantWikiTopics = JSON.parse(relevantWikiTopicsStr.replace('```json', '').replace('```', ''));
-
+        
             console.log(relevantWikiTopics);
         
             for (const topic of relevantWikiTopics) {
@@ -37,7 +37,12 @@ export const fetchContext = async (topic: string) => {
 
         }
     } catch (e: any) {
-        console.error(e.message);
+        if (!retry && e instanceof SyntaxError) {
+            console.warn("Failed to parse JSON, retrying generation");
+            return fetchContext(topic, true);
+        } else {
+            console.warn(e.message);
+        }
     }
 
     console.log(`Context from pages: ${processedPages}`);
