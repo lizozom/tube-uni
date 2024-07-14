@@ -11,7 +11,7 @@ export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 // Helper functions
 
-const getTopics = async (topic: string, durationSec: number, context: string[], retry: boolean = false) => {
+const getTopics = async (topic: string, durationSec: number, context: string[], retry: boolean = false): Promise<Array<any>> => {
   const durationOnlyContent = durationSec - 60 - 60; // intro and outro
   const maxChapters = Math.floor(durationOnlyContent / (60 * 3));
   const prompt = `
