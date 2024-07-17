@@ -17,6 +17,18 @@ const youngSerif = Young_Serif({
 export const metadata: Metadata = {
   title: "tube uni",
   description: "do something useful with your commute, dummy",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://tubeuni.app",
+    siteName: "tube uni",
+    images: {
+      url: "https://tubeuni.app/og-image.png",
+      width: 1200,
+      height: 630,
+      alt: "tube uni",
+    },
+  }
 };
 
 export default function RootLayout({
