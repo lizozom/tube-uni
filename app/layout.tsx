@@ -17,6 +17,7 @@ const youngSerif = Young_Serif({
 export const metadata: Metadata = {
   title: "tube uni",
   description: "do something useful with your commute, dummy",
+  metadataBase: new URL('https://tubeuni.app'),
   openGraph: {
     type: "website",
     locale: "en_US",
