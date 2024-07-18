@@ -9,7 +9,6 @@ import { getScriptByTopics } from './getScript';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
-// Helper functions
 
 export async function GET(
   req: NextRequest
