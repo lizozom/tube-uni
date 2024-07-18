@@ -33,7 +33,7 @@ const getContentGemini = async (prompt: string, context: string[]) => {
   const getContentOpenAI = async (prompt: string) => {
     const completion = await openai.chat.completions.create({
       messages: [{ role: "system", content: prompt }],
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
     });
   
     return completion.choices[0].message.content;
