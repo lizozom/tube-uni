@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TubeStation } from "../types";
+import { TubeStation, PodcastResponse } from "../types";
 import { SplashScreen } from "./SplashScreen";
 import { LoadingScreen } from "./LoaderScreen";
 import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
+import { PodcastHistory } from "./PodcastHistory";
 import { ErrorScreen } from "./ErrorScreen";
+import { storePodcastInHistory } from "./helpers";
 import { track } from '@vercel/analytics';
 
 
@@ -25,7 +27,7 @@ export function CommuteApp(props: CommuteAppProps) {
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
   const [travelTimeMin, setTravelTimeMin] = useState<number | undefined>(undefined);
   const [topic, setTopic] = useState<string>();
-  const [podcastResponse, setPodcastResponse] = useState<any>();
+  const [podcastResponse, setPodcastResponse] = useState<PodcastResponse>();
 
   useEffect(() => {
     let vh = window.innerHeight * 0.01;
@@ -46,10 +48,11 @@ export function CommuteApp(props: CommuteAppProps) {
     setErrorOrCode(errorOrCode);
   }
 
-  const onPodcastResponse = (topic: string, duration: number, podcastResponse: any) => {
+  const onPodcastResponse = (topic: string, duration: number, podcastResponse: PodcastResponse) => {
     setTopic(topic);
     setTravelTimeMin(duration);
     setPodcastResponse(podcastResponse);
+    storePodcastInHistory(topic, duration, podcastResponse);
   }
 
   const onBack = () => {
@@ -87,6 +90,7 @@ export function CommuteApp(props: CommuteAppProps) {
       </ErrorScreen>);
   } else {
     return (
+      <>
         <CommuteForm 
             stations={stations} 
             topics={topics} 
@@ -96,6 +100,7 @@ export function CommuteApp(props: CommuteAppProps) {
             onError={onError}
         
         ></CommuteForm>
+      </>
     );
   }
 

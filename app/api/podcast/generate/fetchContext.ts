@@ -1,5 +1,7 @@
 import wiki from 'wikipedia';
-import { getContent } from './getContent';
+import { YAMLParseError } from 'yaml';
+import { getContent } from '../../helpers/getContent';
+import { parseContent } from '../../helpers/parseContent';
 
 const getWikiContent = async (topic: string) => {
     const page = await wiki.page(topic);
@@ -11,9 +13,9 @@ const getWikiContent = async (topic: string) => {
 
 export const fetchContext = async (topic: string, retry: boolean = false): Promise<Array<string>> => {
     const relavantWikiTopicsPrompt = `
-        Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". Return the response as a JSON list.
+        Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". Return the response as a YAML list.
         The list should only contain the topics, for example: ["Topic A", "Topic B", "Topic C"].
-        IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
+        IMPORTANT! Return ONLY a YAML object. Don't add quotes or comments around it.
     `;
 
     const context: Array<string> = [];
@@ -21,7 +23,7 @@ export const fetchContext = async (topic: string, retry: boolean = false): Promi
     try {
         const relevantWikiTopicsStr = await getContent(relavantWikiTopicsPrompt);
         if (relevantWikiTopicsStr) {
-            const relevantWikiTopics = JSON.parse(relevantWikiTopicsStr.replace('```json', '').replace('```', ''));
+            const relevantWikiTopics = parseContent(relevantWikiTopicsStr) as Array<string>;
         
             console.log(relevantWikiTopics);
         
@@ -37,8 +39,8 @@ export const fetchContext = async (topic: string, retry: boolean = false): Promi
 
         }
     } catch (e: any) {
-        if (!retry && e instanceof SyntaxError) {
-            console.warn("Failed to parse JSON, retrying generation");
+        if (!retry && e instanceof YAMLParseError) {
+            console.warn("Failed to parse YAML, retrying generation");
             return fetchContext(topic, true);
         } else {
             console.warn(e.message);

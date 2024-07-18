@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button, Image } from "@nextui-org/react";
 import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
-import { TubeStation } from "../types";
+import { TubeStation, PodcastResponse, PodcastRecord } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
 import { track } from '@vercel/analytics';
@@ -13,7 +13,7 @@ export interface CommuteFormProps {
     topics: Array<string>;
     placeholderTopic: string;
     onIsLoading: (isLoading: boolean) => void;
-    onPodcastResponse: (topic: string, duration: number, podcastResponse: any) => void;
+    onPodcastResponse: (topic: string, duration: number, podcastResponse: PodcastResponse) => void;
     onError: (errorOrCode?: Error) => void;
 }
 
@@ -24,9 +24,42 @@ export function CommuteForm(props: CommuteFormProps) {
   const [start, setStart] = useState<string | undefined>();//("Covent Garden");
   const [end, setEnd] = useState<string | undefined>();//("Hyde Park Corner");
   const [topic, setTopic] = useState<string>();
+  const [recommendedTopics, setRecommendedTopics] = useState<string[]>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
   const [podcastText, setPodcastText] = useState<string>('');
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log('fetching recommendations');
+    const fetchRecommendations = async () => {
+      try {
+        // Retrieve history from localStorage
+        const historyStr = localStorage.getItem('podcastHistory');
+        const history = historyStr && historyStr.length > 0 ? JSON.parse(historyStr) : []; 
+
+        const response = await fetch('/api/recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(history.map((item: PodcastRecord) => item.title)),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setRecommendedTopics(data); 
+        } else {
+          console.error('Failed to fetch recommendations');
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    };
+
+    fetchRecommendations();
+  }, []); 
+
 
   useEffect(() => {
     if (topic && travelTimeMin && topic.trim().length > 3) {
@@ -49,7 +82,7 @@ export function CommuteForm(props: CommuteFormProps) {
     const timeoutId = setTimeout(() => controller.abort(), 180000)
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}`, {signal: controller.signal} );
     clearTimeout(timeoutId);
-    const podcastContent: Record<string, any> = await response.json();
+    const podcastContent: PodcastResponse = await response.json() as PodcastResponse;
     const { errorCode, script } = podcastContent;
     if (errorCode) {
       throw new Error(errorCode);
@@ -76,7 +109,8 @@ export function CommuteForm(props: CommuteFormProps) {
   }
 
   const loadTitle = () => {
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const topicsList = recommendedTopics || topics;
+    const randomTopic = topicsList[Math.floor(Math.random() * topicsList.length)];
     track('loadTitle', { type: 'random', topic: randomTopic })
     setTopic(randomTopic);
   }
