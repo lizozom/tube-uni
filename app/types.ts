@@ -16,3 +16,9 @@ export interface PodcastRecord {
     url: string;
   }
   
+export interface ScriptTopic {
+    topic: string
+    description: string
+    length?: number
+    content?: string
+  }
