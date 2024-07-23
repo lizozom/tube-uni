@@ -7,6 +7,7 @@ import { moderate } from './moderate';
 import { fetchContext } from './fetchContext';
 import { ScriptResponse } from './types';
 import { ScriptTopic } from '../../../types';
+import { joinChunksWithSSML } from '../../helpers/joinChunks';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
@@ -36,6 +37,11 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
       Don't use asterixes or any other special characters for formatting.
       Don't add comments or staging instructions.
       Don't write "Host:" or "Guest:".
+
+      Use the following SSML tags to enrich and improve the tone of the script.
+      Use it in moderation, to emphasize important parts of the script.
+       * <prosody> tags with attributes rate and volume to control the speed and volume of the speech.
+       * <break /> tags to add pauses, where needed. Break tags should always be self-closing.
   `;
 
   const promptPromises: Array<Promise<string>> = []
@@ -77,7 +83,7 @@ const getScriptByTopics = async (topic: string, duration: number, topicsArr: Arr
   }
   
   const scriptChunks = await Promise.all(promptPromises);
-  const script = scriptChunks.join('\n');
+  const script = joinChunksWithSSML(scriptChunks);
 
   console.log(`Script length is ${script.split(" ").length}. Asked for ${duration/60*160}`)
   return {
