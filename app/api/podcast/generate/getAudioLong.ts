@@ -2,13 +2,7 @@
 import { Storage } from '@google-cloud/storage';
 import { v1beta1 } from '@google-cloud/text-to-speech';
 import { credentials } from './credentials';
-import OpenAI from "openai";
 import { ScriptResponse } from './types';
-
-const apiKey = process.env.OPENAI_API_KEY;
-const openai = new OpenAI({
-  apiKey,
-});
 
 const ttsLongClient = new v1beta1.TextToSpeechLongAudioSynthesizeClient({
   credentials
@@ -83,37 +77,6 @@ const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
   });
 }
 
-const getAudioLongOpenAI = async (script: ScriptResponse, fileName: string) => {
-  const mp3Promises: Array<Promise<Buffer>> = [];
-
-  for (let i = 0; i < script.chunks.length; i++) {
-    const chunk = script.chunks[i];
-    const startTime = performance.now();
-    
-    mp3Promises.push(new Promise<Buffer>(async (resolve, reject) => {
-        try {
-          const response = await openai.audio.speech.create({
-            model: "tts-1",
-            voice: "nova",
-            input: chunk,
-          });
-          const mp3Buffer = await response.arrayBuffer();
-          console.log(`Chunk ${i} audio done, took ${performance.now() - startTime}ms`);
-          resolve(Buffer.from(mp3Buffer));
-        } catch (e) {
-          reject(e);
-        }
-      })
-    );
-  }
-
-  const responses = await Promise.all(mp3Promises);
-  const combinedBuffer = Buffer.concat(responses);
-  
-  // Save the combined buffer to the storage bucket
-  await storageClient.bucket("tube-uni-podcasts").file(`podcasts/${fileName}`).save(combinedBuffer);
-}
-
 export const getAudioFilename = (topic: string, duration: number) => {
   return `${topic.replace(/ /g, "_")}_${duration}.mp3`;
 }
@@ -139,13 +102,8 @@ export const getAudioLong = async (script: ScriptResponse, topic: string, durati
       resolve(outputUrl);
     } else {
       console.log(`Generating audio for ${topic} with duration ${duration}`);
-      if (process.env.TTS_PROVIDER === "openai") {
-        await getAudioLongOpenAI(script, fileName);
-        resolve(outputUrl);
-      } else {
-        await getAudioLongGcp(script, fileName);
-        resolve(outputUrl);
-      }
+      await getAudioLongGcp(script, fileName);
+      resolve(outputUrl);
     }
   });
 }
