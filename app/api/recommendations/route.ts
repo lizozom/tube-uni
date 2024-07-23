@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getContent } from '../helpers/getContent';
-import { parseContent } from '../helpers/parseContent';
+import { getContentJson } from '../podcast/generate/getContent';
 import { prompt as recommendationPrompt } from '../prompts/recommendations';
 
 export async function POST(req: NextRequest) {
@@ -8,8 +7,7 @@ export async function POST(req: NextRequest) {
   const history = body.history || [];
 
   const prompt = recommendationPrompt(history);
-  const recommendationsStr = await getContent(prompt) || '';
-  const recommendations = parseContent(recommendationsStr) as Array<string>;
+  const recommendations = await getContentJson<Array<string>>(prompt);
 
   return NextResponse.json(recommendations);
 }
