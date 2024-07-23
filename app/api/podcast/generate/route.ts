@@ -1,17 +1,18 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { kv } from '@vercel/kv';
-import { getContent } from './getContent';
+import { getContent, getContentJson } from './getContent';
 import { getAudioLong } from './getAudioLong';
 import { moderate } from './moderate';
 import { fetchContext } from './fetchContext';
 import { ScriptResponse } from './types';
+import { ScriptTopic } from '../../../types';
 
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 // Helper functions
 
-const getTopics = async (topic: string, durationSec: number, context: string[], retry: boolean = false): Promise<Array<any>> => {
+const getTopics = async (topic: string, durationSec: number, context: string[], retry: boolean = false) => {
   const durationOnlyContent = durationSec - 60 - 60; // intro and outro
   const maxChapters = Math.floor(durationOnlyContent / (60 * 3));
   const prompt = `
@@ -24,23 +25,7 @@ const getTopics = async (topic: string, durationSec: number, context: string[], 
     },
     IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
   `
-  const text = await getContent(prompt, context);
-  if (!text) {
-    throw new Error("Failed to get script");
-  }
-  try {
-    return JSON.parse(text.replace('```json', '').replace('```', ''));
-  } catch (e) {
-    if (!retry && e instanceof SyntaxError) {
-      console.warn("Failed to parse JSON, retrying generation");
-      return getTopics(topic, durationSec, context, true);
-    } else {
-      console.error(text);
-      console.error(e)
-      throw e;
-    }
-  
-  }  
+  return getContentJson<Array<ScriptTopic>>(prompt, context);
 }
 
 const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>, context: string[]) => {
