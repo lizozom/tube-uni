@@ -3,9 +3,10 @@ import { getContentJson } from './getContent';
 
 export const fetchContext = async (topic: string, retry: boolean = false) => {
     const relavantWikiTopicsPrompt = `
-        Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". Return the response as a JSON list.
-        The list should only contain the topics, for example: ["Topic A", "Topic B", "Topic C"].
-        IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
+        Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". 
+        Return the response as a JSON list.
+        The response should look like this:
+        ["Topic A", "Topic B", "Topic C"].
     `;
 
     const context: Array<string> = [];
