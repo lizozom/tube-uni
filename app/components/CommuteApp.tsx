@@ -6,7 +6,9 @@ import { SplashScreen } from "./SplashScreen";
 import { LoadingScreen } from "./LoaderScreen";
 import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
+import { PodcastHistory } from "./PodcastHistory";
 import { ErrorScreen } from "./ErrorScreen";
+import { storePodcastInHistory } from "./helpers";
 import { track } from '@vercel/analytics';
 
 
@@ -50,6 +52,7 @@ export function CommuteApp(props: CommuteAppProps) {
     setTopic(topic);
     setTravelTimeMin(duration);
     setPodcastResponse(podcastResponse);
+    storePodcastInHistory(topic, duration, podcastResponse);
   }
 
   const onBack = () => {
@@ -87,6 +90,7 @@ export function CommuteApp(props: CommuteAppProps) {
       </ErrorScreen>);
   } else {
     return (
+      <>
         <CommuteForm 
             stations={stations} 
             topics={topics} 
@@ -96,6 +100,8 @@ export function CommuteApp(props: CommuteAppProps) {
             onError={onError}
         
         ></CommuteForm>
+        <PodcastHistory></PodcastHistory>
+      </>
     );
   }
 

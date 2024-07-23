@@ -9,9 +9,16 @@ export interface PodcastResponse {
     errorCode?: string;
 }
 
+export interface PodcastRecord {
+    title: string;
+    duration: string;
+    createDate: string;
+    url: string;
+}
+  
 export interface ScriptTopic {
     topic: string
     description: string
     length?: number
     content?: string
-  }
+}
