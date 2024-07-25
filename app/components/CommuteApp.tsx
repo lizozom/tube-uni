@@ -1,14 +1,13 @@
 "use client";
 
-import { useRouter, usePathname } from 'next/navigation';
+import { track } from '@vercel/analytics';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { TubeStation, PodcastResponse } from "../types";
 import { LoadingScreen } from "./LoaderScreen";
 import { CommuteForm } from "./CommuteForm";
-import { PodcastHistory } from "./PodcastHistory";
 import { ErrorScreen } from "./ErrorScreen";
 import { storePodcastInHistory } from "./helpers";
-import { track } from '@vercel/analytics';
 
 export interface CommuteAppProps {
     stations: Array<TubeStation>;
@@ -39,18 +38,13 @@ export function CommuteApp(props: CommuteAppProps) {
   }
 
   const onPodcastResponse = (topic: string, duration: number, podcastResponse: PodcastResponse) => {
+    track('podcastGenerated', { topic: topic || '' });
     storePodcastInHistory(topic, duration, podcastResponse);
     const params = new URLSearchParams();
     params.set("topic", topic);
     params.set("travelTimeMin", duration.toString());
     params.set("audioFile", podcastResponse.audioFile);
     router.push(`/player?${params.toString()}`);
-  }
-
-  const onBack = () => {
-    track('backButtonClick');
-    setIsError(false);
-    setErrorOrCode(undefined);
   }
 
   if (isLoading) {
@@ -61,8 +55,7 @@ export function CommuteApp(props: CommuteAppProps) {
     return (
     <ErrorScreen
       errorOrCode={errorOrCode}
-      onBack={onBack} >
-      </ErrorScreen>);
+     />)
   } else {
     return (
       <>
