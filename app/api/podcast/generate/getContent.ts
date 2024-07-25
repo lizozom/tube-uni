@@ -41,7 +41,7 @@ const getContentGemini = async (prompt: string, context: string[], options: Cont
     return completion.choices[0].message.content;
   }
   
-  export const getContent = async (prompt: string, context: string[] = [], options: ContentOptions): Promise<string | null> => {
+  export const getContent = async (prompt: string, context: string[] = [], options: ContentOptions = {}): Promise<string | null> => {
     try {
       const activeModel = await kv.get("active-model");
   
