@@ -7,7 +7,7 @@ import { TubeStation, PodcastResponse } from "../types";
 import { LoadingScreen } from "./LoaderScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
-import { storePodcastInHistory } from "./helpers";
+import { storePodcastInHistory } from "./storage";
 
 export interface CommuteAppProps {
     stations: Array<TubeStation>;

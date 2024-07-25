@@ -5,15 +5,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@nextui-org/react";
 import TopicSelector from "./TopicSelector";
+import { setPodcastTopics, fetchRecommendations } from "./storage";
 
 export function SettingsForm() {
   const router = useRouter();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [topics, setTopics] = useState<string[]>([]);
 
-  const onClick = () => {
-    localStorage.setItem("podcastTopics", JSON.stringify(topics));
+  const onClick = async () => {
+    setPodcastTopics(topics);
     track("settingsFormSubmit", { topics: JSON.stringify(topics) });
+    await fetchRecommendations(topics);
     router.push("/app");
   };
 

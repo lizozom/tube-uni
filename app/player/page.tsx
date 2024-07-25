@@ -1,29 +1,17 @@
 "use client";
 
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { PlayScreen } from "../components/PlayScreen";
+import dynamic from 'next/dynamic';
 
-export default function Player() {  
-  const searchParams = useSearchParams();
-  const topic = searchParams.get('topic');
-  const travelTimeMin = searchParams.get('travelTimeMin') as any as number;
-  const audioFile = searchParams.get('audioFile');
+const PlayerComponent = dynamic(() => import('../components/PlayPodcast'), {
+  suspense: true,
+});
 
-  if (!topic || !travelTimeMin || !audioFile) {
-    return (
-      <main>
-        <h1>Invalid parameters</h1>
-      </main>
-    );
-  }
-
+export default function PlayerPage() {  
   return (
-    <main>
-      <PlayScreen 
-        topic={topic} 
-        duration={travelTimeMin as any as number} 
-        audioFile={audioFile}>
-        </PlayScreen>
-    </main>
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlayerComponent />
+    </Suspense>
   );
 }

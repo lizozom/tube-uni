@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { track } from '@vercel/analytics';
 import { useRouter } from 'next/navigation'
+import { getPodcastTopics } from "./storage";
 
 export interface SplashScreenProps {}
 
@@ -19,7 +20,7 @@ export function SplashScreen() {
 
   const onClick = () => {
     track('splashScreenClick');
-    if (localStorage.getItem('podcastTopics')) {
+    if (getPodcastTopics()) {
       router.push('/app');
     } else {
       router.push('/app/settings');

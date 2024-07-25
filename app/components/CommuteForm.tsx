@@ -7,7 +7,7 @@ import { TubeStation } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
 import { track } from '@vercel/analytics';
-import { fetchRecommendations, getCurrentRecommendations } from "./helpers";
+import { fetchRecommendations, getCurrentRecommendations, getPodcastTopics } from "./storage";
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
@@ -39,11 +39,10 @@ export function CommuteForm(props: CommuteFormProps) {
       recommendations.current = await fetchRecommendations(podcastTopics);
     }
 
-    const podcastTopics = localStorage.getItem('podcastTopics');
+    const podcastTopics = getPodcastTopics();
     if (podcastTopics) {
       track('getRecommendations', { topics: podcastTopics });
-      const parsedTopics = JSON.parse(podcastTopics);
-      getRecommendations(parsedTopics);
+      getRecommendations(podcastTopics);
     }
   }, []);
 

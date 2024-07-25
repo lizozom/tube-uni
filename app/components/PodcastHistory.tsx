@@ -7,7 +7,7 @@ export const PodcastHistory: React.FC = () => {
   useEffect(() => {
     // Check if window is available to access localStorage
     if (typeof window !== 'undefined') {
-      const storedPodcasts = localStorage.getItem('podcastHistory');
+      const storedPodcasts = window.localStorage.getItem('podcastHistory');
       if (storedPodcasts) {
         setPodcasts(JSON.parse(storedPodcasts));
       }
