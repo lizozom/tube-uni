@@ -14,7 +14,8 @@ export const getScriptByTopics = async (topic: string, duration: number, topicsA
         Use the following SSML tags to enrich and improve the tone of the script.
         Use it in moderation, to emphasize important parts of the script.
          * <prosody> tags with attributes rate and volume to control the speed and volume of the speech.
-         * <break /> tags to add pauses, where needed. Break tags should always be self-closing.
+         * <break /> tags to add pauses, especially between paragraphs, use in moderation. 
+         * Break tags should always be self-closing.
     `;
   
     const promptPromises: Array<Promise<string>> = []
