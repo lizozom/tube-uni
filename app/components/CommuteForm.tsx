@@ -111,45 +111,45 @@ export function CommuteForm(props: CommuteFormProps) {
   }, [start, end]);
 
   return (
-    <div className="flex flex-col gap-4">
-            <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
-                <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
-            </div>
-            <div className="flex flex-col flex-wrap ms-auto relative w-[70%] min-w-[330px]">
-                <StationSelector title="to" stations={stations} station={end} onChange={handleEndStationChange}/>
-            </div>
-            <div className="flex flex-col flex-wrap content-center">
-                <TravelTimeSelector commuteTime={travelTimeMin} onChange={handleTravelTimeChange}></TravelTimeSelector>
-            </div>
-            <div className="flex flex-col flex-wrap content-center">
-                <div className="text-main py-2 px-4">teach me about...</div>
-                <div className="relative w-full h-fit">
-                  <textarea 
-                      className="teach-me-input placeholder-white w-full p-4 text-main"
-                      value={topic} 
-                      placeholder={topicPlaceholder ? `type something like "${topicPlaceholder}"` : ''}
-                      rows={3}
-                      onInput={e => setTopic((e.target as HTMLTextAreaElement).value)}
-                      onFocus={e => setTopicPlaceholder('')}
-                      onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
-                  
-                  ></textarea>
-                  <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
-                    <Image
-                      src="/icons/refresh.svg"
-                      className="h-6 w-6 m-4"
-                      alt="refresh"
-                    />
-                  </button>
-                </div>
+    <>
+      <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
+          <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
+      </div>
+      <div className="flex flex-col flex-wrap ms-auto relative w-[70%] min-w-[330px]">
+          <StationSelector title="to" stations={stations} station={end} onChange={handleEndStationChange}/>
+      </div>
+      <div className="flex flex-col flex-wrap content-center">
+          <TravelTimeSelector commuteTime={travelTimeMin} onChange={handleTravelTimeChange}></TravelTimeSelector>
+      </div>
+      <div className="flex flex-col flex-wrap content-center">
+          <div className="text-main py-2 px-4">teach me about...</div>
+          <div className="relative w-full h-fit">
+            <textarea 
+                className="teach-me-input placeholder-white w-full p-4 text-main"
+                value={topic} 
+                placeholder={topicPlaceholder ? `type something like "${topicPlaceholder}"` : ''}
+                rows={3}
+                onInput={e => setTopic((e.target as HTMLTextAreaElement).value)}
+                onFocus={e => setTopicPlaceholder('')}
+                onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
+            
+            ></textarea>
+            <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
+              <Image
+                src="/icons/refresh.svg"
+                className="h-6 w-6 m-4"
+                alt="refresh"
+              />
+            </button>
+          </div>
 
-            </div>
+      </div>
 
-            <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
-                <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
-                create podcast                
-                </Button>
-            </div>
-        </div>
+      <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
+          <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
+          create podcast                
+          </Button>
+      </div>
+  </>
   )
 }

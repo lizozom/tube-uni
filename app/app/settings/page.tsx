@@ -1,9 +1,16 @@
+import { SettingsForm } from '../../components/SettingsForm';
 
-export default function Settings() {  
-  
+export default function Settings() { 
   return (
-    <main className="flex real-100vh w-full max-w-full flex-col items-left justify-between">
-      Settings
-    </main>
+    <>
+      
+      <div className="flex flex-col gap-4">
+        <div className="px-4 text-main">
+          what do you fancy?
+        </div>
+      </div>
+
+      <SettingsForm />
+    </>
   );
 }

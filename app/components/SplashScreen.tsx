@@ -19,7 +19,11 @@ export function SplashScreen() {
 
   const onClick = () => {
     track('splashScreenClick');
-    router.push('/app');
+    if (localStorage.getItem('podcastTopics')) {
+      router.push('/app');
+    } else {
+      router.push('/app/settings');
+    }
   }
   
   if (!display) {
