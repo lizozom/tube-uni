@@ -25,7 +25,6 @@ export function CommuteForm(props: CommuteFormProps) {
   const [end, setEnd] = useState<string | undefined>();//("Hyde Park Corner");
   const [topic, setTopic] = useState<string>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
-  const [podcastText, setPodcastText] = useState<string>('');
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +53,6 @@ export function CommuteForm(props: CommuteFormProps) {
     if (errorCode) {
       throw new Error(errorCode);
     }
-    setPodcastText(script);
     onPodcastResponse(topic, travelTimeMin, podcastContent);
   }
 
@@ -113,11 +111,7 @@ export function CommuteForm(props: CommuteFormProps) {
   }, [start, end]);
 
   return (
-      <div className="w-100">
-        <div className="flex flex-col gap-4">
-            <div className="flex flex-col flex-wrap content-end text-4xl px-4 pt-8 text-color-main">
-                tube uni
-            </div>
+    <div className="flex flex-col gap-4">
             <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
                 <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
             </div>
@@ -157,9 +151,5 @@ export function CommuteForm(props: CommuteFormProps) {
                 </Button>
             </div>
         </div>
-
-
-        {podcastText ? JSON.stringify(podcastText, null, 4): ''}
-      </div>
   )
 }

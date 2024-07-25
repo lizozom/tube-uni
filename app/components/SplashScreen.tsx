@@ -4,12 +4,13 @@ import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { track } from '@vercel/analytics';
+import { useRouter } from 'next/navigation'
 
-export interface SplashScreenProps {
-  onClick: () => void;
-}
+export interface SplashScreenProps {}
 
-export function SplashScreen(props: SplashScreenProps) {
+export function SplashScreen() {
+
+  const router = useRouter();
   const [display, setDisplay] = useState<boolean>(false);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export function SplashScreen(props: SplashScreenProps) {
 
   const onClick = () => {
     track('splashScreenClick');
-    props.onClick();
+    router.push('/app');
   }
   
   if (!display) {

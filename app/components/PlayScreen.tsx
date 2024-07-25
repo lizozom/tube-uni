@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import { track } from '@vercel/analytics';
 
@@ -7,7 +8,6 @@ export interface PlayScreenProps {
   topic: string;
   duration: number;
   audioFile: string;
-  onBack: () => void;
 }
 
 function downloadAudio(name: string, fileName: string) {
@@ -31,7 +31,13 @@ function downloadAudio(name: string, fileName: string) {
 
 
 export function PlayScreen(props: PlayScreenProps) {
-  const { topic, duration, audioFile, onBack } = props;
+  const { topic, duration, audioFile } = props;
+
+  const router = useRouter();
+  const onBack = () => {
+    track('backButtonClick');
+    router.push('/app');
+  }
 
   const playAudio = () => {
     // playAudioString(audio.audioContent);
