@@ -17,7 +17,7 @@ export const storePodcastInHistory = (topic: string, duration: number, podcastRe
   }
 };
 
-export const getPodcastHistory = () => {
+export const getPodcastHistory = (): PodcastRecord[] => {
   if (typeof window !== 'undefined') {
     const storedPodcasts = window.localStorage.getItem('podcastHistory');
     return storedPodcasts ? JSON.parse(storedPodcasts) : [];
@@ -40,19 +40,19 @@ export const fetchRecommendations = async (podcastTopics: string[]) => {
     window.localStorage.setItem("topicRecommendations", JSON.stringify(recommendations));
   }
 
-  return recommendations;
+  return recommendations as string[];
 }
 
 export const getCurrentRecommendations = () => {
   const storedRecommendations = typeof window !== 'undefined' ? window.localStorage.getItem("topicRecommendations") : null;
   if (!storedRecommendations) return null;
-  return JSON.parse(storedRecommendations);
+  return JSON.parse(storedRecommendations) as string[];
 }
 
 export const getPodcastTopics = () => {
   const storedPodcastTopics = typeof window !== 'undefined' ? window.localStorage.getItem('podcastTopics') : null;
   if (!storedPodcastTopics) return null;
-  return JSON.parse(storedPodcastTopics);
+  return JSON.parse(storedPodcastTopics) as string[];
 }
 
 export const setPodcastTopics = (topics: string[]) => {

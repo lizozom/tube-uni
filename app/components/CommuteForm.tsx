@@ -3,11 +3,16 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Image } from "@nextui-org/react";
 import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
-import { TubeStation } from "../types";
+import { TubeStation, PodcastRecord } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
 import { track } from '@vercel/analytics';
-import { fetchRecommendations, getCurrentRecommendations, getPodcastTopics } from "./storage";
+import { 
+  fetchRecommendations, 
+  getCurrentRecommendations, 
+  getPodcastTopics,
+  getPodcastHistory,
+ } from "./storage";
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
@@ -27,12 +32,15 @@ export function CommuteForm(props: CommuteFormProps) {
   const [topic, setTopic] = useState<string>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const [history, setHistory] = useState<PodcastRecord[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
 
   const hasFetchedData = useRef(false);
   const recommendations = useRef(getCurrentRecommendations() || topics);
 
   useEffect(() => { 
     if (hasFetchedData.current) return;
+    setHistory(getPodcastHistory());
     
     const getRecommendations = async (podcastTopics: string[]) => {
       hasFetchedData.current = true; 
@@ -41,9 +49,10 @@ export function CommuteForm(props: CommuteFormProps) {
 
     const podcastTopics = getPodcastTopics();
     if (podcastTopics) {
-      track('getRecommendations', { topics: podcastTopics });
+      track('getRecommendations', { topics: JSON.stringify(podcastTopics) });
       getRecommendations(podcastTopics);
     }
+
   }, []);
 
   useEffect(() => {
@@ -97,6 +106,14 @@ export function CommuteForm(props: CommuteFormProps) {
     setTopic(randomTopic);
   }
 
+  const loadHistory = () => {
+    const historyTopic = history[historyIndex];
+    track('loadHistory', { type: 'history', topic: historyTopic.title, index: historyIndex });
+    setHistoryIndex((historyIndex + 1) % history.length);
+    setTravelTimeMin(historyTopic.duration as any as number);
+    setTopic(historyTopic.title);
+  }
+
   const handleStartStationChange = (station: string) => {
     setStart(station);
   }
@@ -146,12 +163,19 @@ export function CommuteForm(props: CommuteFormProps) {
                 className="teach-me-input placeholder-white w-full p-4 text-main"
                 value={topic} 
                 placeholder={topicPlaceholder ? `type something like "${topicPlaceholder}"` : ''}
-                rows={3}
+                rows={4}
                 onInput={e => setTopic((e.target as HTMLTextAreaElement).value)}
                 onFocus={e => setTopicPlaceholder('')}
                 onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
             
             ></textarea>
+              <button className={`bg-transparent h-6 absolute bottom-10 -left-2 p-0 mx-2 ${history.length > 1 ? 'block' : 'hidden'}`} onClick={loadHistory}>
+                <Image
+                  src="/icons/reload.svg"
+                  className="h-6 w-6 m-4"
+                  alt="reload"
+                />
+              </button>
             <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
               <Image
                 src="/icons/refresh.svg"
