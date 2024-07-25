@@ -25,10 +25,10 @@ const initialTopics: TopicSelector[] = [
   { content: 'science' },
   { content: 'female leaders' },
   { content: 'architecture' },
+  { content: 'biology' },
   { content: 'geology' },
   { content: 'internet' },
   { content: 'finance' },
-  { content: 'cryptocurrencies' },
 ];
 
 const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) => {
@@ -46,7 +46,6 @@ const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) 
       ? [...clickedTopics, topic]
       : clickedTopics.filter(t => t !== topic);
     setClickedTopics(newClickedTopics);
-
     onSelect(newClickedTopics);
     
   };

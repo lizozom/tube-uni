@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button, Image } from "@nextui-org/react";
 import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
 import { TubeStation } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
 import { track } from '@vercel/analytics';
+import { fetchRecommendations, getCurrentRecommendations } from "./helpers";
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
@@ -26,6 +27,25 @@ export function CommuteForm(props: CommuteFormProps) {
   const [topic, setTopic] = useState<string>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+
+  const hasFetchedData = useRef(false);
+  const recommendations = useRef(getCurrentRecommendations() || topics);
+
+  useEffect(() => { 
+    if (hasFetchedData.current) return;
+    
+    const getRecommendations = async (podcastTopics: string[]) => {
+      hasFetchedData.current = true; 
+      recommendations.current = await fetchRecommendations(podcastTopics);
+    }
+
+    const podcastTopics = localStorage.getItem('podcastTopics');
+    if (podcastTopics) {
+      track('getRecommendations', { topics: podcastTopics });
+      const parsedTopics = JSON.parse(podcastTopics);
+      getRecommendations(parsedTopics);
+    }
+  }, []);
 
   useEffect(() => {
     if (topic && travelTimeMin && topic.trim().length > 3) {
@@ -49,7 +69,7 @@ export function CommuteForm(props: CommuteFormProps) {
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}`, {signal: controller.signal} );
     clearTimeout(timeoutId);
     const podcastContent: Record<string, any> = await response.json();
-    const { errorCode, script } = podcastContent;
+    const { errorCode } = podcastContent;
     if (errorCode) {
       throw new Error(errorCode);
     }
@@ -68,13 +88,12 @@ export function CommuteForm(props: CommuteFormProps) {
       track('generateError', { topic: topic || '' });
       console.error(e);
       props.onError(e);
-    } finally {
       onIsLoading(false);
     }
   }
 
   const loadTitle = () => {
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const randomTopic = recommendations.current[Math.floor(Math.random() * recommendations.current.length)];
     track('loadTitle', { type: 'random', topic: randomTopic })
     setTopic(randomTopic);
   }

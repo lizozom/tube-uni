@@ -18,10 +18,10 @@ export function SettingsForm() {
   };
 
   const onSelect = (topics: string[]) => {
+    setTopics(topics);
     if (topics.length > 1) {
       setIsDisabled(false);
     } else {
-      setTopics(topics);
       setIsDisabled(true);
     }
   };

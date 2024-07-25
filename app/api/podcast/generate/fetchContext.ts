@@ -3,16 +3,16 @@ import { getContentJson } from './getContent';
 
 export const fetchContext = async (topic: string, retry: boolean = false) => {
     const relavantWikiTopicsPrompt = `
-        Give me a list of AT MOST 3 relevant wikipedia page for the topic "${topic}". 
+        Give me a list of AT MOST 5 relevant wikipedia pages for the topic "${topic}". 
         Return the response as a JSON list.
         The response should look like this:
-        ["Topic A", "Topic B", "Topic C"].
+        ["Topic A", "Topic B", "Topic C" ...].
     `;
 
     const context: Array<string> = [];
     const processedPages: Array<string> = [];
 
-    const relevantWikiTopics = await getContentJson<Array<string>>(relavantWikiTopicsPrompt);
+    const relevantWikiTopics = await getContentJson<Array<string>>(relavantWikiTopicsPrompt, [], { model: 'small' });
     console.log(relevantWikiTopics);
     
     for (const topic of relevantWikiTopics) {
