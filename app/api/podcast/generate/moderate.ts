@@ -2,7 +2,7 @@
 import language from '@google-cloud/language';
 import { credentials } from './credentials';
 
-const ignoreCategories = ['Finance', 'Politics', 'Legal', 'War & Conflict', 'Health', 'Religion & Belief']
+const ignoreCategories = ['Finance', 'Politics', 'Legal', 'Health', 'Religion & Belief']
 
 const langClient = new language.LanguageServiceClient({
     credentials
