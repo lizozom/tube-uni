@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@nextui-org/react";
@@ -12,6 +13,7 @@ export function SettingsForm() {
 
   const onClick = () => {
     localStorage.setItem("podcastTopics", JSON.stringify(topics));
+    track("settingsFormSubmit", { topics: JSON.stringify(topics) });
     router.push("/app");
   };
 

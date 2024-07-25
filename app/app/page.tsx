@@ -35,7 +35,7 @@ export default function Home() {
   const placeholderTopic = topics[Math.floor(Math.random() * topics.length)];
   
   return (
-    <main>
+    <main className="flex flex-col gap-4">
       <CommuteApp stations={stations} topics={topics} placeholderTopic={placeholderTopic}/>
     </main>
   );
