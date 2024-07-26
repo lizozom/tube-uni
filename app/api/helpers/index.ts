@@ -1,1 +1,1 @@
-export { joinChunksWithSSML } from './joinChunks';
+export { joinChunksWithSSML } from './ssml';
