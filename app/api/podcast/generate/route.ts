@@ -14,9 +14,8 @@ export async function GET(
   req: NextRequest
 ) {
   const { searchParams } = req.nextUrl;
-  const topic = (searchParams.get('topic') || "This history of London")
-    .trim()
-    .replace(/[^a-zA-Z0-9 ]/g, "");
+  let topic = (searchParams.get('topic') || "This history of London");
+  topic = topic.trim().replace(/[^a-zA-Z0-9 ]/g, "");
   const duration = Number(searchParams.get('duration') || 60 * 5);
 
   if (topic.length < 3 || topic.length > 200) {

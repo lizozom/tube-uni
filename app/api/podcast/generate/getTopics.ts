@@ -15,7 +15,5 @@ export const getTopics = async (topic: string, durationSec: number, context: str
     },
     IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
   `
-  const topics = await getContentJson<Array<ScriptTopic>>(prompt, context);
-  console.debug(`Got topics: ${JSON.stringify(topics)}`);
-  return topics;
+  return await getContentJson<Array<ScriptTopic>>(prompt, context);
 }

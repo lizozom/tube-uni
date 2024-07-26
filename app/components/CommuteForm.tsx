@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button, Image } from "@nextui-org/react";
 import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
-import { TubeStation } from "../types";
+import { TubeStation, PodcastRecord } from "../types";
 import StationSelector from "./StationSelector";
 import TravelTimeSelector from "./TravelTimeSelector";
 import { track } from '@vercel/analytics';
+import { 
+  fetchRecommendations, 
+  getCurrentRecommendations, 
+  getPodcastTopics,
+  getPodcastHistory,
+ } from "./storage";
 
 export interface CommuteFormProps {
     stations: Array<TubeStation>;
@@ -25,8 +31,29 @@ export function CommuteForm(props: CommuteFormProps) {
   const [end, setEnd] = useState<string | undefined>();//("Hyde Park Corner");
   const [topic, setTopic] = useState<string>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
-  const [podcastText, setPodcastText] = useState<string>('');
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const [history, setHistory] = useState<PodcastRecord[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
+
+  const hasFetchedData = useRef(false);
+  const recommendations = useRef(getCurrentRecommendations() || topics);
+
+  useEffect(() => { 
+    if (hasFetchedData.current) return;
+    setHistory(getPodcastHistory());
+    
+    const getRecommendations = async (podcastTopics: string[]) => {
+      hasFetchedData.current = true; 
+      recommendations.current = await fetchRecommendations(podcastTopics);
+    }
+
+    const podcastTopics = getPodcastTopics();
+    if (podcastTopics) {
+      track('getRecommendations', { topics: JSON.stringify(podcastTopics) });
+      getRecommendations(podcastTopics);
+    }
+
+  }, []);
 
   useEffect(() => {
     if (topic && travelTimeMin && topic.trim().length > 3) {
@@ -50,11 +77,10 @@ export function CommuteForm(props: CommuteFormProps) {
     const response: any = await fetch(`/api/podcast/generate?${params.toString()}`, {signal: controller.signal} );
     clearTimeout(timeoutId);
     const podcastContent: Record<string, any> = await response.json();
-    const { errorCode, script } = podcastContent;
+    const { errorCode } = podcastContent;
     if (errorCode) {
       throw new Error(errorCode);
     }
-    setPodcastText(script);
     onPodcastResponse(topic, travelTimeMin, podcastContent);
   }
 
@@ -70,15 +96,22 @@ export function CommuteForm(props: CommuteFormProps) {
       track('generateError', { topic: topic || '' });
       console.error(e);
       props.onError(e);
-    } finally {
       onIsLoading(false);
     }
   }
 
   const loadTitle = () => {
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const randomTopic = recommendations.current[Math.floor(Math.random() * recommendations.current.length)];
     track('loadTitle', { type: 'random', topic: randomTopic })
     setTopic(randomTopic);
+  }
+
+  const loadHistory = () => {
+    const historyTopic = history[historyIndex];
+    track('loadHistory', { type: 'history', topic: historyTopic.title, index: historyIndex });
+    setHistoryIndex((historyIndex + 1) % history.length);
+    setTravelTimeMin(historyTopic.duration as any as number);
+    setTopic(historyTopic.title);
   }
 
   const handleStartStationChange = (station: string) => {
@@ -113,53 +146,52 @@ export function CommuteForm(props: CommuteFormProps) {
   }, [start, end]);
 
   return (
-      <div className="w-100">
-        <div className="flex flex-col gap-4">
-            <div className="flex flex-col flex-wrap content-end text-4xl px-4 pt-8 text-color-main">
-                tube uni
-            </div>
-            <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
-                <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
-            </div>
-            <div className="flex flex-col flex-wrap ms-auto relative w-[70%] min-w-[330px]">
-                <StationSelector title="to" stations={stations} station={end} onChange={handleEndStationChange}/>
-            </div>
-            <div className="flex flex-col flex-wrap content-center">
-                <TravelTimeSelector commuteTime={travelTimeMin} onChange={handleTravelTimeChange}></TravelTimeSelector>
-            </div>
-            <div className="flex flex-col flex-wrap content-center">
-                <div className="text-main py-2 px-4">teach me about...</div>
-                <div className="relative w-full h-fit">
-                  <textarea 
-                      className="teach-me-input placeholder-white w-full p-4 text-main"
-                      value={topic} 
-                      placeholder={topicPlaceholder ? `type something like "${topicPlaceholder}"` : ''}
-                      rows={3}
-                      onInput={e => setTopic((e.target as HTMLTextAreaElement).value)}
-                      onFocus={e => setTopicPlaceholder('')}
-                      onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
-                  
-                  ></textarea>
-                  <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
-                    <Image
-                      src="/icons/refresh.svg"
-                      className="h-6 w-6 m-4"
-                      alt="refresh"
-                    />
-                  </button>
-                </div>
-
-            </div>
-
-            <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
-                <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
-                create podcast                
-                </Button>
-            </div>
-        </div>
-
-
-        {podcastText ? JSON.stringify(podcastText, null, 4): ''}
+    <>
+      <div className="flex flex-col flex-wrap me-auto relative w-[70%] min-w-[330px]">
+          <StationSelector title="from" stations={stations} station={start} onChange={handleStartStationChange}/>
       </div>
+      <div className="flex flex-col flex-wrap ms-auto relative w-[70%] min-w-[330px]">
+          <StationSelector title="to" stations={stations} station={end} onChange={handleEndStationChange}/>
+      </div>
+      <div className="flex flex-col flex-wrap content-center">
+          <TravelTimeSelector commuteTime={travelTimeMin} onChange={handleTravelTimeChange}></TravelTimeSelector>
+      </div>
+      <div className="flex flex-col flex-wrap content-center">
+          <div className="text-main py-2 px-4">teach me about...</div>
+          <div className="relative w-full h-fit">
+            <textarea 
+                className="teach-me-input placeholder-white w-full p-4 text-main"
+                value={topic} 
+                placeholder={topicPlaceholder ? `type something like "${topicPlaceholder}"` : ''}
+                rows={4}
+                onInput={e => setTopic((e.target as HTMLTextAreaElement).value)}
+                onFocus={e => setTopicPlaceholder('')}
+                onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
+            
+            ></textarea>
+              <button className={`bg-transparent h-6 absolute bottom-10 -left-2 p-0 mx-2 ${history.length > 0 ? 'block' : 'hidden'}`} onClick={loadHistory}>
+                <Image
+                  src="/icons/reload.svg"
+                  className="h-6 w-6 m-4"
+                  alt="reload"
+                />
+              </button>
+            <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
+              <Image
+                src="/icons/refresh.svg"
+                className="h-6 w-6 m-4"
+                alt="refresh"
+              />
+            </button>
+          </div>
+
+      </div>
+
+      <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
+          <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
+          create podcast                
+          </Button>
+      </div>
+  </>
   )
 }

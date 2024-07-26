@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { track } from '@vercel/analytics';
+import { useRouter } from 'next/navigation';
+import { useState } from "react";
 import { TubeStation, PodcastResponse } from "../types";
-import { SplashScreen } from "./SplashScreen";
 import { LoadingScreen } from "./LoaderScreen";
-import { PlayScreen } from "./PlayScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
-import { track } from '@vercel/analytics';
-
+import { storePodcastInHistory } from "./storage";
+import useViewportHeight from "./useViewportHeight";
 
 export interface CommuteAppProps {
     stations: Array<TubeStation>;
@@ -18,24 +18,12 @@ export interface CommuteAppProps {
 
 export function CommuteApp(props: CommuteAppProps) {
   const { topics, stations, placeholderTopic } = props;
-
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const router = useRouter();    
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
-  const [travelTimeMin, setTravelTimeMin] = useState<number | undefined>(undefined);
-  const [topic, setTopic] = useState<string>();
-  const [podcastResponse, setPodcastResponse] = useState<PodcastResponse>();
 
-  useEffect(() => {
-    let vh = window.innerHeight * 0.01;
-    // Then we set the value in the --vh custom property to the root of the document
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  }, []);
-
-  const hideSplash = () => {
-    setShowSplash(false);
-  }
+  useViewportHeight();
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading);
@@ -47,35 +35,16 @@ export function CommuteApp(props: CommuteAppProps) {
   }
 
   const onPodcastResponse = (topic: string, duration: number, podcastResponse: PodcastResponse) => {
-    setTopic(topic);
-    setTravelTimeMin(duration);
-    setPodcastResponse(podcastResponse);
+    track('podcastGenerated', { topic: topic || '' });
+    storePodcastInHistory(topic, duration, podcastResponse);
+    const params = new URLSearchParams();
+    params.set("topic", topic);
+    params.set("travelTimeMin", duration.toString());
+    params.set("audioFile", podcastResponse.audioFile);
+    router.push(`/player?${params.toString()}`);
   }
 
-  const onBack = () => {
-    track('backButtonClick');
-    setTopic('');
-    setIsError(false);
-    setErrorOrCode(undefined);
-    setTravelTimeMin(undefined);
-    setPodcastResponse(undefined);
-  }
-
-  if (topic && travelTimeMin && podcastResponse) {
-    return (
-      <PlayScreen 
-        topic={topic} 
-        duration={travelTimeMin} 
-        onBack={onBack} 
-        audioFile={podcastResponse.audioFile}>
-            
-        </PlayScreen>
-    )
-  } else if (showSplash) {
-    return (
-      <SplashScreen onClick={hideSplash}></SplashScreen>
-    )
-  } else if (isLoading) {
+  if (isLoading) {
     return (
       <LoadingScreen></LoadingScreen>
     )
@@ -83,10 +52,10 @@ export function CommuteApp(props: CommuteAppProps) {
     return (
     <ErrorScreen
       errorOrCode={errorOrCode}
-      onBack={onBack} >
-      </ErrorScreen>);
+     />)
   } else {
     return (
+      <>
         <CommuteForm 
             stations={stations} 
             topics={topics} 
@@ -96,6 +65,8 @@ export function CommuteApp(props: CommuteAppProps) {
             onError={onError}
         
         ></CommuteForm>
+        {/* <PodcastHistory></PodcastHistory> */}
+      </>
     );
   }
 

@@ -1,14 +1,9 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Image from "next/image";
 import { track } from '@vercel/analytics';
-
-export interface PlayScreenProps {
-  topic: string;
-  duration: number;
-  audioFile: string;
-  onBack: () => void;
-}
 
 function downloadAudio(name: string, fileName: string) {
   // const byteCharacters = atob(mp3String);
@@ -30,8 +25,25 @@ function downloadAudio(name: string, fileName: string) {
 }
 
 
-export function PlayScreen(props: PlayScreenProps) {
-  const { topic, duration, audioFile, onBack } = props;
+function PlayPodcast() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const topic = searchParams.get('topic');
+  const travelTimeMin = searchParams.get('travelTimeMin') as any as number;
+  const audioFile = searchParams.get('audioFile');
+
+  if (!topic || !travelTimeMin || !audioFile) {
+    return (
+      <main>
+        <h1>Invalid parameters</h1>
+      </main>
+    );
+  }
+
+  const onBack = () => {
+    track('backButtonClick');
+    router.push('/app');
+  }
 
   const playAudio = () => {
     // playAudioString(audio.audioContent);
@@ -50,7 +62,7 @@ export function PlayScreen(props: PlayScreenProps) {
                 alt="logo"
               />
             </button>
-            <span className="text-2xl text-center items-center px-6">{topic} in {duration} minutes</span>
+            <span className="text-2xl text-center items-center px-6">{topic} in {travelTimeMin} minutes</span>
         </div>
         <button className="text-main absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onBack}>
           back to start
@@ -59,3 +71,5 @@ export function PlayScreen(props: PlayScreenProps) {
 
   );
 }
+
+export default PlayPodcast;

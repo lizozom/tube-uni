@@ -4,13 +4,18 @@ import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { track } from '@vercel/analytics';
+import { useRouter } from 'next/navigation'
+import { getPodcastTopics } from "./storage";
+import useViewportHeight from "./useViewportHeight";
 
-export interface SplashScreenProps {
-  onClick: () => void;
-}
+export interface SplashScreenProps {}
 
-export function SplashScreen(props: SplashScreenProps) {
+export function SplashScreen() {
+
+  const router = useRouter();
   const [display, setDisplay] = useState<boolean>(false);
+  
+  useViewportHeight();
 
   useEffect(() => {
     setDisplay(true);
@@ -18,7 +23,11 @@ export function SplashScreen(props: SplashScreenProps) {
 
   const onClick = () => {
     track('splashScreenClick');
-    props.onClick();
+    if (getPodcastTopics()) {
+      router.push('/app');
+    } else {
+      router.push('/app/settings');
+    }
   }
   
   if (!display) {

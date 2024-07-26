@@ -1,14 +1,21 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import { track } from '@vercel/analytics';
 
 export interface ErrorScreenProps {
-  onBack: () => void;
   errorOrCode?: Error | undefined;
 }
 
 export function ErrorScreen(props: ErrorScreenProps) {
-  const { onBack, errorOrCode } = props;
+  const { errorOrCode } = props;
+  const router = useRouter();
+  
+  const onBack = () => {
+    track('errorBackButtonClick');
+    router.push('/app');
+  }
 
   let errMsg = (
     <>
