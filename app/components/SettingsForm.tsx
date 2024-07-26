@@ -6,12 +6,15 @@ import { useState } from "react";
 import { Button } from "@nextui-org/react";
 import TopicSelector from "./TopicSelector";
 import { setPodcastTopics, fetchRecommendations } from "./storage";
+import useViewportHeight from "./useViewportHeight";
 
 export function SettingsForm() {
   const router = useRouter();
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [topics, setTopics] = useState<string[]>([]);
 
+  useViewportHeight();
+  
   const onClick = async () => {
     setPodcastTopics(topics);
     track("settingsFormSubmit", { topics: JSON.stringify(topics) });

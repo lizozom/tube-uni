@@ -2,12 +2,13 @@
 
 import { track } from '@vercel/analytics';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TubeStation, PodcastResponse } from "../types";
 import { LoadingScreen } from "./LoaderScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
 import { storePodcastInHistory } from "./storage";
+import useViewportHeight from "./useViewportHeight";
 
 export interface CommuteAppProps {
     stations: Array<TubeStation>;
@@ -22,11 +23,7 @@ export function CommuteApp(props: CommuteAppProps) {
   const [isError, setIsError] = useState<boolean>(false);
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
 
-  useEffect(() => {
-    let vh = window.innerHeight * 0.01;
-    // Then we set the value in the --vh custom property to the root of the document
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  }, []);
+  useViewportHeight();
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading);
