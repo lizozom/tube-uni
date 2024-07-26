@@ -70,7 +70,7 @@ const getContentGemini = async (prompt: string, context: string[], options: Cont
     }
     try {
       const response = JSON.parse(text.replace('```json', '').replace('```', ''));
-      console.debug(`Got JSON response: ${JSON.stringify(response)}`);
+      console.debug(`Got JSON response: ${JSON.stringify(response, null, 2)}`);
       return response;
     } catch (e) {
       if (!retry && e instanceof SyntaxError) {
