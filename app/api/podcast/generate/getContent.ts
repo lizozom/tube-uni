@@ -61,12 +61,15 @@ const getContentGemini = async (prompt: string, context: string[]) => {
   }
 
   export const getContentJson = async <T>(prompt: string, context: string[] = [], retry = false): Promise<T> => {
+    console.debug(`Getting content with prompt: ${prompt}`);
     const text = await getContent(prompt, context);
     if (!text) {
       throw new Error("Failed to get script");
     }
     try {
-      return JSON.parse(text.replace('```json', '').replace('```', ''));
+      const response = JSON.parse(text.replace('```json', '').replace('```', ''));
+      console.debug(`Got JSON response: ${JSON.stringify(response)}`);
+      return response;
     } catch (e) {
       if (!retry && e instanceof SyntaxError) {
         console.warn("Failed to parse JSON, retrying generation");

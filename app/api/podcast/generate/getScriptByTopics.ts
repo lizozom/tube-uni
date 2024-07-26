@@ -1,17 +1,13 @@
 import { getContent } from "./getContent";
 import { ScriptResponse } from "./types";
+import { getIntroLengthInWords, getContentChunkLengthInWords } from "./helpers";
 import { joinChunksWithSSML, removeSSMLTags } from "../../helpers/ssml";
 import ssmlCheck from "ssml-check";
 
 export const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>, context: string[]) => {
-    const wordsPerMinute = 160;
-    const desiredWords = duration / 60 * wordsPerMinute;
-    // Intro \ outro should be at most 1 minute or less than 10% of the total duration
-    // If the podcast is 5 minutes, the intro would be 0.5 minutes
-    // If the podcast is 10 minutes, the intro would be 1 minute
-    // If the podcast is 30 minutes, the intro would still be 1 minutes
-    const introOutroDuration = Math.min(wordsPerMinute, desiredWords * 0.1); 
-    const desiredChunkLength = Math.floor((desiredWords - 2 * introOutroDuration) / (topicsArr.length - 2));
+    const introOutroDuration = getIntroLengthInWords(duration);
+    const desiredChunkLength = getContentChunkLengthInWords(duration, topicsArr);
+
     console.log(`Desired chunk length is ${desiredChunkLength}`);
     console.log(`Desired intro/outro length is ${introOutroDuration}`);
     const commonPromptPart = `
@@ -21,7 +17,7 @@ export const getScriptByTopics = async (topic: string, duration: number, topicsA
         Follow this nerative!
 
         Formatting:
-        Don't use asterixes or any other special characters for formatting.
+        Don't use asterisk (*) or any special characters.
         Don't add comments or staging instructions.
         Don't write "Host:" or "Guest:".
   
@@ -41,11 +37,14 @@ export const getScriptByTopics = async (topic: string, duration: number, topicsA
       if (i === 0) {
         prompt = `
         You are writing a podcast about ${topic}.
-        Write a ${introOutroDuration} word introduction for the podcast.
         
-        Start the by saying:
-        This is Tube Uni. You are listening to your very own podcast about ${topic}<break time="300ms"/>. 
-        Have a pleasant commute and enjoy your listening!<break time="1s"/>".
+        Start with an opener:
+        This is Tube Uni. You are listening to your very own podcast about ${topic}. 
+        <break time="300ms"/>
+        Have a pleasant commute and enjoy your listening!
+        <break time="1s"/>
+
+        Write a ${introOutroDuration} word introduction for the podcast (including the opener).
 
         ${commonPromptPart}
       `;
