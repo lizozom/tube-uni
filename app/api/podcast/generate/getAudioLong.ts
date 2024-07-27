@@ -32,8 +32,8 @@ const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
       outputGcsUri: `${GS_PATH}${fileName}`,
       input: { ssml: script.content },
       voice: {
-        languageCode: "en-gb",
-        name: "en-GB-Studio-C"
+        languageCode: "en-us",
+        name: "en-US-Neural2-F"
       },
       audioConfig: {
         audioEncoding: "LINEAR16" as any,

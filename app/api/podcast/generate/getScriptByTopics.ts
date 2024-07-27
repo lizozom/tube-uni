@@ -19,14 +19,12 @@ export const getScriptByTopics = async (topic: string, duration: number, topics:
         Don't write "Host:" or "Guest:".
   
         Tone:
-        Keep the script tone concise, conversational, informal and engaging.
-        Don't use too many superlatives or exclamations.
-        Use the following SSML tags to enrich and improve the tone of the script.
-        Use it in moderation, to emphasize important parts of the script.
-         * <prosody> tags with attributes rate and volume to control the speed and volume of the speech.
-           valid values for volume are: x-soft, soft, medium, loud
-         * <break time="..."/> tags to add pauses, where needed. 
-         * Break tags should always be self-closing. Break time should be only integer numbers with units (s or ms).
+        Keep the script concise, conversational, informal, and engaging.
+        Avoid using too many superlatives or exclamations.
+        Use the following SSML tags to enhance the tone of the script in moderation to accentuate important parts:
+          <prosody> tags with attributes rate and volume to control the speed and volume of the speech. Valid values for volume are: x-soft, soft, medium, loud.
+          <break time="..."/> tags to add pauses where needed. Break tags should always be self-closing, with break time specified in integer numbers and units (s or ms).
+          <emphasis level="..."> tags with valid levels: strong, moderate, reduced.
     `;
   
     const promptPromises: Array<Promise<string>> = []
