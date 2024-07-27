@@ -13,7 +13,6 @@ export const fetchContext = async (topic: string, retry: boolean = false) => {
     const processedPages: Array<string> = [];
 
     const relevantWikiTopics = await getContentJson<Array<string>>(relavantWikiTopicsPrompt, [], { model: 'small' });
-    console.log(relevantWikiTopics);
     
     for (const topic of relevantWikiTopics) {
         try {

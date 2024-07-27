@@ -2,7 +2,7 @@
 import { Storage } from '@google-cloud/storage';
 import { v1beta1 } from '@google-cloud/text-to-speech';
 import { credentials } from './credentials';
-import { ScriptResponse } from './types';
+import { ScriptResponse } from '../../../types';
 
 const ttsLongClient = new v1beta1.TextToSpeechLongAudioSynthesizeClient({
   credentials

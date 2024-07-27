@@ -15,10 +15,19 @@ export interface PodcastRecord {
     createDate: string;
     url: string;
 }
+export interface ScriptResponse {
+    content: string,
+    chunks: string[]
+}
+  
+export interface TopicsResponse {
+    storyarc: string;
+    topics: ScriptTopic[];
+}
   
 export interface ScriptTopic {
     topic: string
     description: string
-    length?: number
+    words?: number
     content?: string
 }

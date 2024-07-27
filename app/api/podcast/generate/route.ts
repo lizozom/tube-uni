@@ -49,7 +49,7 @@ export async function GET(
       console.log("Getting topics");
       startTime = performance.now();
       const topics = await getTopics(topic, duration, context);
-      console.log(`Got topics with ${topics.length} items, took ${performance.now() - startTime}ms`)
+      console.log(`Got topics with ${topics.topics.length} items, took ${performance.now() - startTime}ms`)
 
       console.log("Getting script")
       startTime = performance.now();

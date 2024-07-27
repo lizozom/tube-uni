@@ -1,20 +1,17 @@
 import { getContent } from "./getContent";
-import { ScriptResponse } from "./types";
-import { getIntroLengthInWords, getContentChunkLengthInWords } from "./helpers";
+import { ScriptResponse, TopicsResponse } from "../../../types";
 import { joinChunksWithSSML, removeSSMLTags } from "../../helpers/ssml";
 import ssmlCheck from "ssml-check";
 
-export const getScriptByTopics = async (topic: string, duration: number, topicsArr: Array<{topic: string, description: string}>, context: string[]) => {
-    const introOutroDuration = getIntroLengthInWords(duration);
-    const desiredChunkLength = getContentChunkLengthInWords(duration, topicsArr);
-
-    console.log(`Desired chunk length is ${desiredChunkLength}`);
-    console.log(`Desired intro/outro length is ${introOutroDuration}`);
+export const getScriptByTopics = async (topic: string, duration: number, topics: TopicsResponse, context: string[]) => {
+    const topicsArr = topics.topics;
     const commonPromptPart = `
-        Poscast topics:
+        Content:
+        The podcast follows this story arc (don't mention it explicitly in the script): 
+        ${topics.storyarc}
+
         The podcast has the following chapters:
-        ${topicsArr.map((t, index) => `${index + 1}. ${t.topic}`).join("\n")}
-        Follow this nerative!
+        ${topicsArr.map((t, index) => `${index + 1}. ${t.topic} (${t.words} words)`).join("\n")}
 
         Formatting:
         Don't use asterisk (*) or any special characters.
@@ -22,10 +19,12 @@ export const getScriptByTopics = async (topic: string, duration: number, topicsA
         Don't write "Host:" or "Guest:".
   
         Tone:
-        Keep the script tone conversational, informal and engaging.
+        Keep the script tone concise, conversational, informal and engaging.
+        Don't use too many superlatives or exclamations.
         Use the following SSML tags to enrich and improve the tone of the script.
         Use it in moderation, to emphasize important parts of the script.
          * <prosody> tags with attributes rate and volume to control the speed and volume of the speech.
+           valid values for volume are: x-soft, soft, medium, loud
          * <break time="..."/> tags to add pauses, where needed. 
          * Break tags should always be self-closing. Break time should be only integer numbers with units (s or ms).
     `;
@@ -44,21 +43,21 @@ export const getScriptByTopics = async (topic: string, duration: number, topicsA
         Have a pleasant commute and enjoy your listening!
         <break time="1s"/>
 
-        Write a ${introOutroDuration} word introduction for the podcast (including the opener).
+        Write a ${info.words} word introduction for the podcast (including the opener).
 
         ${commonPromptPart}
       `;
       } else if (i === topicsArr.length - 1) {
         prompt =  `
         You are writing a podcast about ${topic}.
-        Write a ${introOutroDuration} word outro for the podcast.
+        Write a ${info.words} word outro for the podcast.
         ${commonPromptPart}
       `;
       } else {
         prompt =  `
         You are writing a podcast about ${topic}.
         Write only the ${i} paragraph.
-        It should have ${desiredChunkLength} words about ${info.topic} - ${info.description}.    
+        It should have ${info.words} words about ${info.topic} - ${info.description}.    
         
         ${commonPromptPart}
       `;
