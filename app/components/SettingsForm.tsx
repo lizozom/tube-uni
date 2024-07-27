@@ -16,6 +16,7 @@ export function SettingsForm() {
   useViewportHeight();
   
   const onClick = async () => {
+    setIsDisabled(true);
     setPodcastTopics(topics);
     track("settingsFormSubmit", { topics: JSON.stringify(topics) });
     await fetchRecommendations(topics);

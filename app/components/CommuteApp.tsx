@@ -2,12 +2,12 @@
 
 import { track } from '@vercel/analytics';
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TubeStation, PodcastResponse } from "../types";
 import { LoadingScreen } from "./LoaderScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
-import { storePodcastInHistory } from "./storage";
+import { storePodcastInHistory, getPodcastTopics } from "./storage";
 import useViewportHeight from "./useViewportHeight";
 
 export interface CommuteAppProps {
@@ -24,6 +24,13 @@ export function CommuteApp(props: CommuteAppProps) {
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
 
   useViewportHeight();
+
+  useEffect(() => {
+    const podcastTopics = getPodcastTopics();
+    if (!podcastTopics) {
+      router.push('/app/settings');
+    }
+  }, []);
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading);
