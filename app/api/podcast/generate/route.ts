@@ -16,11 +16,12 @@ export async function GET (
 
   if (ip) {
     // allow at most 10 podcasts per day
+    const maxCount = Number(process.env.MAX_PODCASTS_PER_DAY || '10');
     const key = `user:${ip}`
     const requestedPodcasts: number | null = await kv.get(key)
     if (!requestedPodcasts) {
       await kv.set(key, 1, { ex: 60 * 60 * 24 })
-    } else if (requestedPodcasts > 10) {
+    } else if (requestedPodcasts > maxCount) {
       return NextResponse.json({ errorCode: 429 })
     } else {
       await kv.set(key, requestedPodcasts + 1)
