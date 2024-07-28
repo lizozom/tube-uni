@@ -29,6 +29,7 @@ const initialTopics: TopicSelector[] = [
   { content: 'geology' },
   { content: 'internet' },
   { content: 'finance' },
+  { content: 'cooking' },
 ];
 
 const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) => {
@@ -51,7 +52,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) 
   };
 
   return (
-    <div className="flex flex-wrap justify-center p-4">
+    <div className="flex flex-wrap justify-center -mx-4">
       {initialTopics.map((card, index) => (
         <TopicCard
           key={index}

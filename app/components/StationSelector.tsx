@@ -50,7 +50,7 @@ export default function StationSelector(props: StationSelectorListboxProps) {
     <Combobox value={station} onChange={setStation}>
       <div className="dropdown-button flex flex-row justify-between pe-3 mb-4 w-full">
         <Combobox.Input
-          className="bg-transparent focus:outline-none h-fit m-0 px-4 py-3 text-lg placeholder:text-white"
+          className="bg-transparent focus:outline-none h-fit m-0 px-4 py-3 text-main placeholder:text-white"
           autoComplete="off"
           placeholder={placeholder}
           onFocus={onFocus}

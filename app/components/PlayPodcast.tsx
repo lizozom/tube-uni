@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Image from "next/image";
@@ -31,6 +32,8 @@ function PlayPodcast() {
   const topic = searchParams.get('topic');
   const travelTimeMin = searchParams.get('travelTimeMin') as any as number;
   const audioFile = searchParams.get('audioFile');
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   if (!topic || !travelTimeMin || !audioFile) {
     return (
@@ -48,7 +51,17 @@ function PlayPodcast() {
   const playAudio = () => {
     // playAudioString(audio.audioContent);
     track('download', { topic: topic || '' });
-    downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);  
+    // downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);  
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+
+    }
   }
   
   return (
@@ -64,6 +77,11 @@ function PlayPodcast() {
               />
             </button>
             <span className="text-2xl text-center items-center px-6">{topic} in {travelTimeMin} minutes</span>
+
+        <audio id="podcastPlayer" ref={audioRef}>
+            <source src={audioFile} type="audio/mpeg"/>
+            Your browser does not support the audio element.
+        </audio>
         </div>
         <button className="text-main absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onBack}>
           back to start

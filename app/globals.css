@@ -31,7 +31,7 @@ body {
 }
 
 .text-main {
-  font-size: 18px;
+  font-size: 1.2em;
 }
 
 li.selected {
@@ -39,7 +39,7 @@ li.selected {
 }
 
 .text-color-main {
-  color: var(--item-color-main);
+  color: var(--font-color-logo);
 }
 
 .logo-text {
