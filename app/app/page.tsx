@@ -33,6 +33,7 @@ const topics = [
 
 export default function Home() {  
   const placeholderTopic = topics[Math.floor(Math.random() * topics.length)];
+  console.log("app");
   
   return (
     <main className="flex flex-col gap-4">
