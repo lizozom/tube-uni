@@ -1,5 +1,5 @@
 import { getContentJson } from "./getContent";
-import { getTotalContentLengthInWords, getIntroLengthInWords, getContentChunkLengthInWords } from './helpers'; 
+import { getTotalContentLengthInWords, getOutroLengthInWords, getContentChunkLengthInWords } from './helpers'; 
 import { TopicsResponse } from "../../../types";
 
 export const getTopics = async (topic: string, durationSec: number, context: string[]) => {
@@ -33,7 +33,7 @@ export const getTopics = async (topic: string, durationSec: number, context: str
   `
   const response = await getContentJson<TopicsResponse>(prompt, context);
 
-  const introOutroDuration = getIntroLengthInWords(durationSec);
+  const introOutroDuration = getOutroLengthInWords(durationSec);
   const desiredChunkLength = getContentChunkLengthInWords(durationSec, response.topics);
   console.log(`Desired chunk length is ${desiredChunkLength}`);
   console.log(`Desired intro/outro length is ${introOutroDuration}`);

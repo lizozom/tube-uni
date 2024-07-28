@@ -34,14 +34,13 @@ export const getScriptByTopics = async (topic: string, duration: number, topics:
       if (i === 0) {
         prompt = `
         You are writing a podcast about ${topic}.
+        Write a very short, 2-3 sentense, ${info.words} word introduction for the podcast (including the opener).
         
-        Start with an opener:
+        Start it by saying:
         This is Tube Uni. You are listening to your very own podcast about ${topic}. 
         <break time="300ms"/>
         Have a pleasant commute and enjoy your listening!
         <break time="1s"/>
-
-        Write a ${info.words} word introduction for the podcast (including the opener).
 
         ${commonPromptPart}
       `;
