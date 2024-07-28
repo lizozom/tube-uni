@@ -40,8 +40,8 @@
    "density": "4.0"
   }
  ],
- "theme_color": "#FFFFFF",
- "background_color": "#FFFFFF",
+ "theme_color": "#FCE8C3",
+ "background_color": "#FCE8C3",
  "start_url": "/",
  "scope": ".",
  "display": "fullscreen",
