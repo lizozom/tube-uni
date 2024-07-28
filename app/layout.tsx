@@ -12,9 +12,11 @@ const youngSerif = Young_Serif({
   weight: ['400'],
   subsets: ['latin'],
   display: 'swap',
+  
 })
 
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: "tube uni",
   description: "do something useful with your commute, dummy",
   metadataBase: new URL('https://tubeuni.app'),

@@ -30,7 +30,7 @@ export function CommuteApp(props: CommuteAppProps) {
     if (!podcastTopics) {
       router.push('/app/settings');
     }
-  }, []);
+  }, [router]);
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading);
