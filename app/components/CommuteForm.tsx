@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Button, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import Image from "next/image";
 import { DistanceMatrixResponseData } from "@googlemaps/google-maps-services-js";
 import { TubeStation, PodcastRecord } from "../types";
 import StationSelector from "./StationSelector";
@@ -174,6 +175,9 @@ export function CommuteForm(props: CommuteFormProps) {
                   src="/icons/reload.svg"
                   className="h-6 w-6 m-4"
                   alt="reload"
+                  width="16"
+                  height="16"
+                priority={true}
                 />
               </button>
             <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
@@ -181,6 +185,9 @@ export function CommuteForm(props: CommuteFormProps) {
                 src="/icons/refresh.svg"
                 className="h-6 w-6 m-4"
                 alt="refresh"
+                priority={true}
+                width="16"
+                height="16"
               />
             </button>
           </div>

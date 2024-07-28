@@ -64,6 +64,7 @@ export default function StationSelector(props: StationSelectorListboxProps) {
                 height={20}
                 className="h-2 w-2"
                 alt="arrow-down"
+                priority={true}
               />
         </Combobox.Button>
       </div>

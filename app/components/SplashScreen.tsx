@@ -42,6 +42,7 @@ export function SplashScreen() {
                 height={250}
                 className="-my-8"
                 alt="logo"
+                priority={true}
               />
               <span className="logo-text text-5xl">tube uni</span>
               <span className="text-2xl text-center">do something useful with<br/>your commute, dummy</span>

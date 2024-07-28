@@ -60,6 +60,7 @@ function PlayPodcast() {
                 width={150}
                 height={150}
                 alt="logo"
+                priority={true}
               />
             </button>
             <span className="text-2xl text-center items-center px-6">{topic} in {travelTimeMin} minutes</span>

@@ -41,6 +41,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
                 width={150}
                 height={150}
                 alt="error"
+                priority={true}
               />
 
               {errMsg}
