@@ -32,9 +32,7 @@ function PlayPodcast() {
     if (!loading && !error && podcastBlob) {
       setCanPlay(true);
     }
-  }, [loading, error] );
-
-
+  }, [podcastBlob, loading, error] );
 
 
   if (!topic || !travelTimeMin || !audioFile) {
