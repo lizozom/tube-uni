@@ -52,7 +52,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) 
   };
 
   return (
-    <div className="flex flex-wrap justify-center -mx-4">
+    <div className="flex flex-wrap justify-center -mx-2">
       {initialTopics.map((card, index) => (
         <TopicCard
           key={index}

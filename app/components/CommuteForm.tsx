@@ -178,20 +178,20 @@ export function CommuteForm(props: CommuteFormProps) {
                 onBlur={e => setTopicPlaceholder(props.placeholderTopic)}
             
             ></textarea>
-              <button className={`bg-transparent h-6 absolute bottom-10 -left-2 p-0 mx-2 ${history.length > 0 ? 'block' : 'hidden'}`} onClick={loadHistory}>
+              <button className={`bg-transparent h-6 absolute bottom-10 -left-2 p-0 ${history.length > 0 ? 'block' : 'hidden'}`} onClick={loadHistory}>
                 <Image
                   src="/icons/reload.svg"
-                  className="h-6 w-6 m-4"
+                  className="h-6 w-6 mt-6 me-6 ms-4 mb-4"
                   alt="reload"
                   width="16"
                   height="16"
                 priority={true}
                 />
               </button>
-            <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0 mx-2" onClick={loadTitle}>
+            <button className="bg-transparent h-6 absolute bottom-10 -right-2 p-0" onClick={loadTitle}>
               <Image
                 src="/icons/refresh.svg"
-                className="h-6 w-6 m-4"
+                className="h-6 w-6 mt-6 ms-6 me-4 mb-4"
                 alt="refresh"
                 priority={true}
                 width="16"
