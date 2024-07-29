@@ -1,16 +1,19 @@
 import { PodcastRecord } from '../types'; 
 
-export const storePodcastInHistory = (topic: string, duration: number, podcastResponse: PodcastRecord) => {
+export const storePodcastInHistory = (podcastResponse: PodcastRecord) => {
   if (typeof window !== 'undefined') {
     const storedPodcasts = window.localStorage.getItem('podcastHistory');
     const podcasts: PodcastRecord[] = storedPodcasts ? JSON.parse(storedPodcasts) : [];
 
     const newPodcast: PodcastRecord = {
-      title: topic,
-      duration,
-      createDate: new Date().toISOString(),
-      url: podcastResponse.url,
+      ...podcastResponse,
+      createDate: new Date().toISOString()
     };
+
+    const existingPodcastIndex = podcasts.findIndex(podcast => podcast.url === newPodcast.url);
+    if (existingPodcastIndex !== -1) {
+      return;
+    }
 
     podcasts.push(newPodcast);
     window.localStorage.setItem('podcastHistory', JSON.stringify(podcasts));

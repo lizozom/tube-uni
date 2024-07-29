@@ -52,7 +52,7 @@ export function CommuteApp(props: CommuteAppProps) {
   const onPodcastResponse = (podcastRecord: PodcastRecord) => {
     const { title, duration } = podcastRecord;
     track('podcastGenerated', { topic: title || '' });
-    storePodcastInHistory(title, duration, podcastRecord);
+    storePodcastInHistory(podcastRecord);
     setPodcastResponse(podcastRecord);
     const params = new URLSearchParams();
     params.set("topic", title);
