@@ -23,7 +23,7 @@ export const storePodcastInHistory = (podcastResponse: PodcastRecord) => {
 export const getPodcastHistory = (): PodcastRecord[] => {
   if (typeof window !== 'undefined') {
     const storedPodcasts = window.localStorage.getItem('podcastHistory');
-    return storedPodcasts ? JSON.parse(storedPodcasts) : [];
+    return storedPodcasts ? (JSON.parse(storedPodcasts) as PodcastRecord[]).reverse() : [];
   }
   return [];
 }
