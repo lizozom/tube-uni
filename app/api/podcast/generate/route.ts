@@ -32,6 +32,7 @@ export async function GET(
   }
 
   const key = `${topic.toLowerCase()}-${duration}`;
+  console.log("Cache is active: ", process.env.CACHE_ACTIVE);
   const cached =  process.env.CACHE_ACTIVE ? await kv.get(key) : false;
   let startTime = performance.now();
 
