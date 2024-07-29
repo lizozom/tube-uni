@@ -33,13 +33,16 @@ export async function GET(
 
   const key = `${topic.toLowerCase()}-${duration}`;
   console.log("Cache is active: ", process.env.CACHE_ACTIVE);
-  const cached =  process.env.CACHE_ACTIVE ? await kv.get(key) : false;
+  const cached =  process.env.CACHE_ACTIVE === 'true' ? (await kv.get(key)) : false;
   let startTime = performance.now();
 
   let response: any = {};
   if (cached) {
     console.log(`Cached response: ${key}`);
     response = cached;
+    if (!response.audioFile) {
+      response.audioFile = await getAudioLong(response.script, topic, duration);
+    }
   } else {
     try {
       console.log("Getting context");
@@ -57,10 +60,19 @@ export async function GET(
       // const script = await getScript(topic, duration, {});
       const script = await getScriptByTopics(topic, duration, topics, context);
       console.log(`Got script, took ${performance.now() - startTime}ms`);
+
+      console.log("Getting audio")
+      startTime = performance.now();
+      const fileName = await getAudioLong(response.script, topic, duration);
+      console.log(`Got audio, took ${performance.now() - startTime}ms`);
+
       response = {
         topics,
-        script
+        script,
+        audioFile: fileName,
       };
+  
+
     } catch (e) {
       console.error(e);
       return NextResponse.json({ msg: "Failed to generate script", errorCode: 500 });
@@ -68,17 +80,6 @@ export async function GET(
   }
 
   kv.set(key, response, { ex: 60 * 60 * 24 });
-
-  console.log("Getting audio")
-  try {
-    startTime = performance.now();
-    const fileName = await getAudioLong(response.script, topic, duration);
-    response.audioFile = fileName;
-    console.log(`Got audio, took ${performance.now() - startTime}ms`);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ msg: "Failed to generate script", errorCode: 500 });
-  }
 
   return NextResponse.json(response);
 }
