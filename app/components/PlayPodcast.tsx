@@ -5,34 +5,37 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { track } from "@vercel/analytics";
-
-function downloadAudio(name: string, fileName: string) {
-  // const byteCharacters = atob(mp3String);
-  // const byteNumbers = new Array(byteCharacters.length);
-  // for (let i = 0; i < byteCharacters.length; i++) {
-  //     byteNumbers[i] = byteCharacters.charCodeAt(i);
-  // }
-  // const byteArray = new Uint8Array(byteNumbers);
-  // const blob = new Blob([byteArray], { type: 'audio/mpeg' });
-
-  // const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = fileName;
-  a.download = `${name}.mp3`;
-  a.target = "_blank";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+import usePodcastBlob from "../hooks/usePodcastBlob";
 
 function PlayPodcast() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const audioFile = searchParams.get("audioFile");
   const topic = searchParams.get("topic");
   const travelTimeMin = searchParams.get("travelTimeMin") as any as number;
-  const audioFile = searchParams.get("audioFile");
+  const { podcastBlob, loading, error } = usePodcastBlob(audioFile);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [canPlay, setCanPlay] = useState(false);
+
+  // use the podcast blob to play the audio
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (podcastBlob) {
+      const url = URL.createObjectURL(podcastBlob);
+      audioRef.current.src = url;
+    }
+  }, [podcastBlob]);
+
+  useEffect(() => {
+    if (!loading && !error && podcastBlob) {
+      setCanPlay(true);
+    }
+  }, [loading, error] );
+
+
+
 
   if (!topic || !travelTimeMin || !audioFile) {
     return (
@@ -42,27 +45,13 @@ function PlayPodcast() {
     );
   }
 
-  useEffect(() => {
-    if (audioRef.current) {
-      // Communicate with the service worker to cache the new podcast URL
-      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          action: "cacheNewPodcast",
-          url: audioFile,
-        });
-      }
-    }
-  }, [audioFile]);
-
   const onBack = () => {
     track("backButtonClick");
     router.push("/app");
   };
 
   const playAudio = () => {
-    // playAudioString(audio.audioContent);
     track("download", { topic: topic || "" });
-    // downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);
     if (!audioRef.current) return;
 
     if (isPlaying) {
@@ -77,7 +66,7 @@ function PlayPodcast() {
   return (
     <div className="flex real-100vh relative">
       <div className="flex m-auto flex-col items-center gap-8 ">
-        <button onClick={playAudio}>
+        <button onClick={playAudio} disabled={!canPlay}>
           <Image
             src="/images/Ready.svg"
             width={150}
@@ -91,7 +80,6 @@ function PlayPodcast() {
         </span>
 
         <audio id="podcastPlayer" ref={audioRef}>
-          <source src={audioFile} type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
       </div>
