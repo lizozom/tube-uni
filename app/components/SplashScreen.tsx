@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { track } from '@vercel/analytics';
 import { useRouter } from 'next/navigation'
 import { getPodcastTopics } from "./storage";
-import useViewportHeight from "./useViewportHeight";
+import useViewportHeight from "../hooks/useViewportHeight";
 
 export interface SplashScreenProps {}
 

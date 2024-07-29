@@ -1,15 +1,15 @@
-import { PodcastRecord, PodcastResponse } from '../types'; 
+import { PodcastRecord } from '../types'; 
 
-export const storePodcastInHistory = (topic: string, duration: number, podcastResponse: PodcastResponse) => {
+export const storePodcastInHistory = (topic: string, duration: number, podcastResponse: PodcastRecord) => {
   if (typeof window !== 'undefined') {
     const storedPodcasts = window.localStorage.getItem('podcastHistory');
     const podcasts: PodcastRecord[] = storedPodcasts ? JSON.parse(storedPodcasts) : [];
 
     const newPodcast: PodcastRecord = {
       title: topic,
-      duration: duration.toString(),
+      duration,
       createDate: new Date().toISOString(),
-      url: podcastResponse.audioFile,
+      url: podcastResponse.url,
     };
 
     podcasts.push(newPodcast);

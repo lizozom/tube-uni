@@ -20,7 +20,7 @@ export interface CommuteFormProps {
     topics: Array<string>;
     placeholderTopic: string;
     onIsLoading: (isLoading: boolean) => void;
-    onPodcastResponse: (topic: string, duration: number, podcastResponse: any) => void;
+    onPodcastResponse: (podcastRecord: PodcastRecord) => void;
     onError: (errorOrCode?: Error) => void;
 }
 
@@ -82,7 +82,12 @@ export function CommuteForm(props: CommuteFormProps) {
     if (errorCode) {
       throw new Error(errorCode);
     }
-    onPodcastResponse(topic, travelTimeMin, podcastContent);
+    onPodcastResponse({
+      url: podcastContent.audioFile,
+      title: topic,
+      duration: travelTimeMin,
+      createDate: new Date().toISOString()
+    });
   }
 
   const onClick = async () => {

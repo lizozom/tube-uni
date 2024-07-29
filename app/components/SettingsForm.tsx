@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@nextui-org/react";
 import TopicSelector from "./TopicSelector";
 import { setPodcastTopics, fetchRecommendations } from "./storage";
-import useViewportHeight from "./useViewportHeight";
+import useViewportHeight from "../hooks/useViewportHeight";
 
 export function SettingsForm() {
   const router = useRouter();

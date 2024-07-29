@@ -1,0 +1,13 @@
+[
+    {
+      "origin": [
+        "https://tubeuni.app/", 
+        "https://tube-read.vercel.app/", 
+        "https://tube-read-git-delorean-lizozoms-projects.vercel.app/",
+        "http://localhost:3000"
+      ],
+      "method": ["GET"],
+      "responseHeader": ["Content-Type"],
+      "maxAgeSeconds": 3600
+    }
+]

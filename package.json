@@ -23,6 +23,7 @@
     "@vercel/kv": "^0.2.4",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.24",
+    "idb": "^8.0.0",
     "langchain": "^0.1.30",
     "next": "14.1.4",
     "next-pwa": "^5.6.0",

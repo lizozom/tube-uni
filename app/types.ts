@@ -11,7 +11,7 @@ export interface PodcastResponse {
 
 export interface PodcastRecord {
     title: string;
-    duration: string;
+    duration: number;
     createDate: string;
     url: string;
 }

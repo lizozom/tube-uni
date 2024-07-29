@@ -3,12 +3,13 @@
 import { track } from '@vercel/analytics';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
-import { TubeStation, PodcastResponse } from "../types";
+import { TubeStation, PodcastRecord } from "../types";
 import { LoadingScreen } from "./LoaderScreen";
 import { CommuteForm } from "./CommuteForm";
 import { ErrorScreen } from "./ErrorScreen";
 import { storePodcastInHistory, getPodcastTopics } from "./storage";
-import useViewportHeight from "./useViewportHeight";
+import useViewportHeight from "../hooks/useViewportHeight";
+import useServiceWorker from "../hooks/useServiceWorker";
 
 export interface CommuteAppProps {
     stations: Array<TubeStation>;
@@ -22,7 +23,9 @@ export function CommuteApp(props: CommuteAppProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined);
+  const [podcastResponse, setPodcastResponse] = useState<PodcastRecord | undefined>(undefined);
 
+  useServiceWorker(podcastResponse);
   useViewportHeight();
 
   useEffect(() => {
@@ -41,13 +44,20 @@ export function CommuteApp(props: CommuteAppProps) {
     setErrorOrCode(errorOrCode);
   }
 
-  const onPodcastResponse = (topic: string, duration: number, podcastResponse: PodcastResponse) => {
-    track('podcastGenerated', { topic: topic || '' });
-    storePodcastInHistory(topic, duration, podcastResponse);
+  const onBack = () => {
+    setIsError(false);
+    setErrorOrCode(undefined);
+  }
+
+  const onPodcastResponse = (podcastRecord: PodcastRecord) => {
+    const { title, duration } = podcastRecord;
+    track('podcastGenerated', { topic: title || '' });
+    storePodcastInHistory(title, duration, podcastRecord);
+    setPodcastResponse(podcastRecord);
     const params = new URLSearchParams();
-    params.set("topic", topic);
+    params.set("topic", title);
     params.set("travelTimeMin", duration.toString());
-    params.set("audioFile", podcastResponse.audioFile);
+    params.set("audioFile", podcastRecord.url);
     router.push(`/player?${params.toString()}`);
   }
 
@@ -59,6 +69,7 @@ export function CommuteApp(props: CommuteAppProps) {
     return (
     <ErrorScreen
       errorOrCode={errorOrCode}
+      onBack={onBack}
      />)
   } else {
     return (

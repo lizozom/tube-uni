@@ -1,20 +1,21 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import { track } from '@vercel/analytics';
 
 export interface ErrorScreenProps {
   errorOrCode?: Error | undefined;
+  onBack?: () => void;
 }
 
 export function ErrorScreen(props: ErrorScreenProps) {
-  const { errorOrCode } = props;
-  const router = useRouter();
+  const { errorOrCode, onBack } = props;
   
-  const onBack = () => {
+  const onErrorBack = () => {
     track('errorBackButtonClick');
-    router.push('/app');
+    if (onBack) {
+      onBack();
+    }
   }
 
   let errMsg = (
@@ -34,7 +35,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
 
   
   return (
-    <div className="flex real-100vh relative">
+    <div className="flex real-100vh w-full absolute  top-0 page-wrapper">
         <div className="flex m-auto flex-col items-center gap-8 ">
             <Image
                 src="/images/Error.svg"
@@ -46,7 +47,7 @@ export function ErrorScreen(props: ErrorScreenProps) {
 
               {errMsg}
         </div>
-        <button className="text-main absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onBack}>
+        <button className="text-main absolute bottom-[35px] left-[50%] -translate-x-[50%]" onClick={onErrorBack}>
           back to start
         </button>
     </div>
