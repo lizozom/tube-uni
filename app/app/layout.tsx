@@ -3,9 +3,6 @@ export default function AppLayout({
 }: {
   children: React.ReactNode
 }) {
-  // return <section>HELLO{children}</section>
-
-
   return (
       <div className="w-100 real-100vh w-full max-w-full">
         <div className="flex flex-col gap-4">
