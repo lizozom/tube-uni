@@ -63,7 +63,7 @@ export async function GET(
 
       console.log("Getting audio")
       startTime = performance.now();
-      const fileName = await getAudioLong(response.script, topic, duration);
+      const fileName = await getAudioLong(script, topic, duration);
       console.log(`Got audio, took ${performance.now() - startTime}ms`);
 
       response = {
