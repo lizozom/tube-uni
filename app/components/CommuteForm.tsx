@@ -33,6 +33,7 @@ export function CommuteForm(props: CommuteFormProps) {
   const [topic, setTopic] = useState<string>();
   const [topicPlaceholder, setTopicPlaceholder] = useState<string>(props.placeholderTopic);
   const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const [submitAction, setSubmitAction] = useState<'generate' | 'load'>('generate');
   const [history, setHistory] = useState<PodcastRecord[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
 
@@ -110,6 +111,7 @@ export function CommuteForm(props: CommuteFormProps) {
     const randomTopic = recommendations.current[Math.floor(Math.random() * recommendations.current.length)];
     track('loadTitle', { type: 'random', topic: randomTopic })
     setTopic(randomTopic);
+    setSubmitAction('generate');
   }
 
   const loadHistory = () => {
@@ -118,6 +120,7 @@ export function CommuteForm(props: CommuteFormProps) {
     setHistoryIndex((historyIndex + 1) % history.length);
     setTravelTimeMin(historyTopic.duration as any as number);
     setTopic(historyTopic.title);
+    setSubmitAction('load');
   }
 
   const handleStartStationChange = (station: string) => {
@@ -201,7 +204,7 @@ export function CommuteForm(props: CommuteFormProps) {
 
       <div className="text-m w-full text-center absolute bottom-[35px] left-[50%] -translate-x-[50%]">
           <Button className="mt-4 rounded-none create-button text-main" onClick={onClick} isDisabled={!canSubmit}>
-          create podcast                
+          {submitAction === 'generate' ? 'create podcast' : 'listen to podcast'}
           </Button>
       </div>
   </>
