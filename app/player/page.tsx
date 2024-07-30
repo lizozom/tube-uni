@@ -1,7 +1,6 @@
 'use client'
 
 import React, { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const PlayerComponent = dynamic(async () => await import('../components/PlayPodcast'), {

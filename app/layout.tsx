@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Young_Serif } from 'next/font/google'
+import { Young_Serif } from 'next/font/google'
 import './globals.css'
 
 import { Analytics } from '@vercel/analytics/react'

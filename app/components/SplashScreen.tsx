@@ -8,8 +8,6 @@ import { useRouter } from 'next/navigation'
 import { getPodcastTopics } from './storage'
 import useViewportHeight from '../hooks/useViewportHeight'
 
-export interface SplashScreenProps {}
-
 export function SplashScreen () {
   const router = useRouter()
   const [display, setDisplay] = useState<boolean>(false)

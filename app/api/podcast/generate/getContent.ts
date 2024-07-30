@@ -59,7 +59,6 @@ export const getContent = async (prompt: string, context: string[] = [], options
       throw e
     }
   }
-  return null
 }
 
 export const getContentJson = async <T>(prompt: string, context: string[] = [], options: ContentOptions = {}): Promise<T> => {

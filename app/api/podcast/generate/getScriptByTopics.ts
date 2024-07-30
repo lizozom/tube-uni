@@ -84,8 +84,9 @@ export const getScriptByTopics = async (topic: string, duration: number, topics:
   }
 
   console.log(`Script length is ${script.split(' ').length}. Asked for ${duration / 60 * 160}`)
-  return {
+  const response: ScriptResponse = {
     content: script,
     chunks: scriptChunks
-  } as ScriptResponse
+  }
+  return response
 }

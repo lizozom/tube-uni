@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import TopicCard from './TopicCard'
 
-interface TopicSelector {
+interface TopicSelectorType {
   content: string
 }
 
@@ -9,7 +9,7 @@ interface TopicSelectorProps {
   onSelect: (topics: string[]) => void
 }
 
-const initialTopics: TopicSelector[] = [
+const initialTopics: TopicSelectorType[] = [
   { content: 'history' },
   { content: 'art' },
   { content: 'psychology' },

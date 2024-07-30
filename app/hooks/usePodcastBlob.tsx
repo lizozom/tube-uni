@@ -2,15 +2,6 @@
 import { useEffect, useState } from 'react'
 import { openDB } from 'idb'
 
-interface Podcast {
-  url: string
-  blob: Blob
-  topic?: string
-  duration?: string
-  date?: string
-  status?: string
-}
-
 const usePodcastBlob = (podcastUrl?: string | null) => {
   const [podcastBlob, setPodcastBlob] = useState<Blob | null>(null)
   const [loading, setLoading] = useState(true)

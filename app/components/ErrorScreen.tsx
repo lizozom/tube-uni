@@ -20,8 +20,10 @@ export function ErrorScreen (props: ErrorScreenProps) {
 
   let errMsg = (
     <>
-      <span className="text-2xl text-center items-center">it's not you, it's us<br/>but something went wrong.</span>
-      <span className="text-2xl text-center items-center">we're sorry</span>
+      <span className="text-2xl text-center items-center">it&apos;s not you, it&apos;s us<br/>but something went wrong.</span>
+      <span className="text-2xl text-center items-center">we&apos;
+
+        re sorry</span>
     </>
   )
 

@@ -27,7 +27,7 @@ export const fetchContext = async (topic: string, retry: boolean = false) => {
     }
   }
 
-  console.log(`Context from pages: ${processedPages}`)
+  console.log(`Context from pages: ${processedPages.join(', ')}`)
 
   return context
 }
