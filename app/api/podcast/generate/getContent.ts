@@ -28,7 +28,7 @@ const getContentGemini = async (prompt: string, context: string[], options: Cont
     ${context && (context.length > 0) ? `Here is some additional context: ${context.join('\n\n')}` : ''}
     `
   )
-  const response = await result.response
+  const response = result.response
   return response.text()
 }
 

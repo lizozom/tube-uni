@@ -55,7 +55,7 @@ const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
         if (checkDone.error) {
           throw new Error(checkDone.error.message)
         }
-        return 'ok';
+        return 'ok'
       } else if (counter >= 100) {
         throw new Error('Audio generation took too long')
       } else {
