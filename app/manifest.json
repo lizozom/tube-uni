@@ -44,6 +44,6 @@
  "background_color": "#FCE8C3",
  "start_url": "/",
  "scope": ".",
- "display": "fullscreen",
+ "display": "standalone",
  "orientation": "portrait"
 }
