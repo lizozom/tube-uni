@@ -34,7 +34,7 @@ export async function notifyUser (userId: string, topic: string, durationSec: nu
   try {
     const subscriptions = await getSubscriptions(userId)
 
-    const durationMin = durationSec / 60;
+    const durationMin = durationSec / 60
 
     const params = new URLSearchParams()
     params.set('topic', topic)
