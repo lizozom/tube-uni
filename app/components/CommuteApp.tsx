@@ -8,8 +8,10 @@ import { LoadingScreen } from './LoaderScreen'
 import { CommuteForm } from './CommuteForm'
 import { ErrorScreen } from './ErrorScreen'
 import { storePodcastInHistory, getPodcastTopics } from './storage'
+import { requestNotificationPermission } from './notifications'
 import useViewportHeight from '../hooks/useViewportHeight'
 import useServiceWorker from '../hooks/useServiceWorker'
+import useUUID from '../hooks/useUUID'
 
 export interface CommuteAppProps {
   stations: TubeStation[]
@@ -20,10 +22,13 @@ export interface CommuteAppProps {
 export function CommuteApp (props: CommuteAppProps) {
   const { topics, stations, placeholderTopic } = props
   const router = useRouter()
+  const userId = useUUID()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isError, setIsError] = useState<boolean>(false)
   const [errorOrCode, setErrorOrCode] = useState<Error | undefined>(undefined)
-  const [podcastResponse, setPodcastResponse] = useState<PodcastRecord | undefined>(undefined)
+  const [podcastResponse, setPodcastResponse] = useState<
+  PodcastRecord | undefined
+  >(undefined)
 
   useServiceWorker(podcastResponse)
   useViewportHeight()
@@ -37,6 +42,7 @@ export function CommuteApp (props: CommuteAppProps) {
 
   const onIsLoading = (isLoading: boolean) => {
     setIsLoading(isLoading)
+    requestNotificationPermission(userId)
   }
 
   const onError = (errorOrCode?: Error) => {
@@ -62,26 +68,19 @@ export function CommuteApp (props: CommuteAppProps) {
   }
 
   if (isLoading) {
-    return (
-      <LoadingScreen></LoadingScreen>
-    )
+    return <LoadingScreen></LoadingScreen>
   } else if (isError) {
-    return (
-    <ErrorScreen
-      errorOrCode={errorOrCode}
-      onBack={onBack}
-     />)
+    return <ErrorScreen errorOrCode={errorOrCode} onBack={onBack} />
   } else {
     return (
       <>
         <CommuteForm
-            stations={stations}
-            topics={topics}
-            placeholderTopic={placeholderTopic}
-            onIsLoading={onIsLoading}
-            onPodcastResponse={onPodcastResponse}
-            onError={onError}
-
+          stations={stations}
+          topics={topics}
+          placeholderTopic={placeholderTopic}
+          onIsLoading={onIsLoading}
+          onPodcastResponse={onPodcastResponse}
+          onError={onError}
         ></CommuteForm>
         {/* <PodcastHistory></PodcastHistory> */}
       </>

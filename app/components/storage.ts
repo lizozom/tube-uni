@@ -63,3 +63,13 @@ export const setPodcastTopics = (topics: string[]) => {
     window.localStorage.setItem('podcastTopics', JSON.stringify(topics))
   }
 }
+
+export const setUUID = (uuid: string) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem('userId', uuid)
+  }
+}
+
+export const getUUID = () => {
+  return typeof window !== 'undefined' ? window.localStorage.getItem('userId') : null
+}

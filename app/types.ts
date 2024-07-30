@@ -31,3 +31,12 @@ export interface ScriptTopic {
   words?: number
   content?: string
 }
+
+export interface Subscription {
+  userId: string
+  endpoint: string
+  keys: {
+    p256dh: string
+    auth: string
+  }
+}

@@ -5,17 +5,18 @@ import { moderate } from './moderate'
 import { fetchContext } from './fetchContext'
 import { getTopics } from './getTopics'
 import { getScriptByTopics } from './getScriptByTopics'
+import { notifyUser } from './notifyUser'
 
 export const maxDuration = 300
 export const dynamic = 'force-dynamic'
 
-export async function GET (
+export async function POST (
   req: NextRequest
 ) {
-  const { searchParams } = req.nextUrl
-  let topic = (searchParams.get('topic') || 'This history of London')
-  topic = topic.trim().replace(/[^a-zA-Z0-9 ]/g, '')
-  const duration = Number(searchParams.get('duration') || 60 * 5)
+  const body = await req.json()
+  const topic = body.topic.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '') || 'This history of London'
+  const duration = Number(body.duration) || 60 * 5
+  const userId = body.userId
 
   if (topic.length < 3 || topic.length > 200) {
     console.error(`Invalid topic length: ${topic} (${topic.length})`)
@@ -69,6 +70,10 @@ export async function GET (
         topics,
         script,
         audioFile: fileName
+      }
+
+      if (userId) {
+        await notifyUser(userId, topic, duration, response.audioFile)
       }
     } catch (e) {
       console.error(e)
