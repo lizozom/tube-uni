@@ -40,9 +40,8 @@
    "density": "4.0"
   },
   {
-   "src": "/icons/android-icon-512x512.png",
-   "sizes": "512x512",
-   "type": "image\/png"
+   "src": "/logo.svg",
+   "sizes": "any"
   }
  ],
  "theme_color": "#FCE8C3",

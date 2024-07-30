@@ -42,6 +42,7 @@ export default function RootLayout ({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
+        <meta name="theme-color" content="#FCE8C3"></meta>
 
       </head>
       <body className={youngSerif.className}>
