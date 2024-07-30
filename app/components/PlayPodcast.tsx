@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { track } from '@vercel/analytics'
 import usePodcastBlob from '../hooks/usePodcastBlob'
+import useViewportHeight from '../hooks/useViewportHeight'
 
 function PlayPodcast () {
   const router = useRouter()
@@ -16,6 +17,8 @@ function PlayPodcast () {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [canPlay, setCanPlay] = useState(false)
+
+  useViewportHeight()
 
   // use the podcast blob to play the audio
   useEffect(() => {
