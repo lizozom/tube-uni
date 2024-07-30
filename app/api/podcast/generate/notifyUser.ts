@@ -42,8 +42,8 @@ export async function notifyUser (userId: string, topic: string, durationSec: nu
     params.set('audioFile', url)
 
     const data = {
-      title: 'Podcast Ready!',
-      body: `Your ${durationMin} minute podcast on ${topic} is ready.`,
+      title: 'Your podcast is ready!',
+      body: `Listen to ${durationMin} minutes on ${topic}.`,
       icon: '/icons/android-icon-192x192.png',
       badge: '/icons/android-icon-192x192.png',
       url: `/player?${params.toString()}`
