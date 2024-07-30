@@ -1,12 +1,6 @@
-import { kv } from '@vercel/kv'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-// fallback in case of 429 errors
-import OpenAI from 'openai'
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY!)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || ''
-})
 
 export interface ContentOptions {
   retry?: boolean
@@ -32,29 +26,15 @@ const getContentGemini = async (prompt: string, context: string[], options: Cont
   return response.text()
 }
 
-const getContentOpenAI = async (prompt: string, options: ContentOptions) => {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: 'system', content: prompt }],
-    model: 'gpt-4o-mini'
-  })
-
-  return completion.choices[0].message.content
-}
-
 export const getContent = async (prompt: string, context: string[] = [], options: ContentOptions = {}): Promise<string | null> => {
   try {
-    const activeModel = await kv.get('active-model')
-
-    // This is a fallback for when Gemini returns 429 errors
-    if (activeModel === 'openai') {
-      return await getContentOpenAI(prompt, options)
-    } else {
-      return await getContentGemini(prompt, context, options)
-    }
+    return await getContentGemini(prompt, context, options)
   } catch (e: any) {
     if (e.message.indexOf(429) > -1) {
-      await kv.set('active-model', 'openai', { ex: 1000 * 60 * 60 * 24 })
-      return await getContent(prompt, context, options)
+      return await getContentGemini(prompt, context, {
+        ...options,
+        retry: true
+      })
     } else {
       throw e
     }
