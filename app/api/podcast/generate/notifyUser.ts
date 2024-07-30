@@ -34,15 +34,18 @@ export async function notifyUser (userId: string, topic: string, durationSec: nu
   try {
     const subscriptions = await getSubscriptions(userId)
 
+    const durationMin = durationSec / 60;
+
     const params = new URLSearchParams()
     params.set('topic', topic)
-    params.set('travelTimeMin', durationSec.toString())
+    params.set('travelTimeMin', durationMin.toString())
     params.set('audioFile', url)
 
     const data = {
       title: 'Podcast Ready!',
-      body: `Your ${durationSec / 60} minute podcast on ${topic} is ready.`,
+      body: `Your ${durationMin} minute podcast on ${topic} is ready.`,
       icon: '/icons/android-icon-192x192.png',
+      badge: '/icons/android-icon-192x192.png',
       url: `/player?${params.toString()}`
     }
 
