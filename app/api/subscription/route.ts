@@ -1,5 +1,5 @@
 // app/api/save-subscription/route.js
-import { NextResponse, NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 import { kv } from '@vercel/kv'
 import { type Subscription } from '../../types'
 import { getSubscriptionKey } from '../podcast/generate/notifyUser'

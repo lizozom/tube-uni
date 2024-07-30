@@ -14,7 +14,7 @@ export async function POST (
   req: NextRequest
 ) {
   const body = await req.json()
-  const topic = body.topic.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, '') || 'This history of London'
+  const topic = body.topic.replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, '') || 'This history of London'
   const duration = Number(body.duration) || 60 * 5
   const userId = body.userId
 

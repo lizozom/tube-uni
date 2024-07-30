@@ -30,7 +30,7 @@ async function deleteSubscription (subscription: Subscription) {
   return await kv.del(subscriptionKey)
 }
 
-export async function notifyUser(userId: string, topic: string, durationSec: number, url: string) {
+export async function notifyUser (userId: string, topic: string, durationSec: number, url: string) {
   try {
     const subscriptions = await getSubscriptions(userId)
 

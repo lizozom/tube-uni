@@ -65,7 +65,7 @@ export default function StationSelector (props: StationSelectorListboxProps) {
               />
         </Combobox.Button>
       </div>
-      <Combobox.Options className="item-color-tertiary text-white max-h-[172px] overflow-y-scroll	absolute top-[80px] z-10 w-full">
+      <Combobox.Options className="item-color-tertiary text-white max-h-[172px] overflow-y-scroll absolute top-[80px] z-10 w-full">
         {filteredStations.map((s) => (
           <Combobox.Option className={`px-3 py-2 ${s.name === station ? 'selected' : ''}`} key={s.tla} value={s.name}>
             {s.name}
