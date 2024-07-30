@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface CardProps {
-  content: string;
-  isClicked: boolean;
-  onClick: () => void;
+  content: string
+  isClicked: boolean
+  onClick: () => void
 }
 
 const Card: React.FC<CardProps> = ({ content, isClicked, onClick }) => {
@@ -14,7 +14,7 @@ const Card: React.FC<CardProps> = ({ content, isClicked, onClick }) => {
     >
       {content}
     </div>
-  );
-};
+  )
+}
 
-export default Card;
+export default Card

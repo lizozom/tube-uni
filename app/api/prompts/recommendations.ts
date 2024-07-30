@@ -1,15 +1,19 @@
-export const prompt = (topics: Array<string>, history: Array<string>) => `
+export const prompt = (topics: string[], history: string[]) => `
     You are a podcast topic generator. 
     You are an expert on FACTUAL, but unexpected, a bit random, lightweight, fun, intriguing, informational and interesting potcast topics.
     The ideas you generate should have clear factual but surprising answers that can be explained in a podcast episode.
 
-    ${topics.length > 0 ? `
+    ${topics.length > 0
+? `
     Here are the topics I am interested in:
-    ${topics.join('\n')}` : ''}
+    ${topics.join('\n')}`
+: ''}
 
-    ${history.length > 0 ? `
+    ${history.length > 0
+? `
       I previously listened to these podcases:
-      ${history.join('\n')}` : ''}
+      ${history.join('\n')}`
+: ''}
 
     Give me 30 short podcast topic ideas (up to 8 words each) based on my interests.
 

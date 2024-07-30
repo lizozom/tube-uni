@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import TopicCard from './TopicCard';
+import React, { useState } from 'react'
+import TopicCard from './TopicCard'
 
 interface TopicSelector {
-  content: string;
+  content: string
 }
 
 interface TopicSelectorProps {
-    onSelect: (topics: string[]) => void;
+  onSelect: (topics: string[]) => void
 }
 
 const initialTopics: TopicSelector[] = [
@@ -29,27 +29,26 @@ const initialTopics: TopicSelector[] = [
   { content: 'geology' },
   { content: 'internet' },
   { content: 'finance' },
-  { content: 'cooking' },
-];
+  { content: 'cooking' }
+]
 
 const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) => {
-  const { onSelect } = props;
-  const [clickedStates, setClickedStates] = useState<boolean[]>(new Array(initialTopics.length).fill(false));
-  const [clickedTopics, setClickedTopics] = useState<string[]>([]);
+  const { onSelect } = props
+  const [clickedStates, setClickedStates] = useState<boolean[]>(new Array(initialTopics.length).fill(false))
+  const [clickedTopics, setClickedTopics] = useState<string[]>([])
 
   const handleCardClick = (index: number) => {
-    const newClickedStates = [...clickedStates];
-    newClickedStates[index] = !newClickedStates[index];
-    setClickedStates(newClickedStates);
+    const newClickedStates = [...clickedStates]
+    newClickedStates[index] = !newClickedStates[index]
+    setClickedStates(newClickedStates)
 
-    const topic = initialTopics[index].content;
+    const topic = initialTopics[index].content
     const newClickedTopics = newClickedStates[index]
       ? [...clickedTopics, topic]
-      : clickedTopics.filter(t => t !== topic);
-    setClickedTopics(newClickedTopics);
-    onSelect(newClickedTopics);
-    
-  };
+      : clickedTopics.filter(t => t !== topic)
+    setClickedTopics(newClickedTopics)
+    onSelect(newClickedTopics)
+  }
 
   return (
     <div className="flex flex-wrap justify-center -mx-2">
@@ -58,11 +57,11 @@ const TopicSelector: React.FC<TopicSelectorProps> = (props: TopicSelectorProps) 
           key={index}
           content={card.content}
           isClicked={clickedStates[index]}
-          onClick={() => handleCardClick(index)}
+          onClick={() => { handleCardClick(index) }}
         />
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default TopicSelector;
+export default TopicSelector

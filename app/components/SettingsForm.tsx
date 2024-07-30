@@ -1,36 +1,36 @@
-"use client";
+'use client'
 
-import { track } from "@vercel/analytics";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Button } from "@nextui-org/react";
-import TopicSelector from "./TopicSelector";
-import { setPodcastTopics, fetchRecommendations } from "./storage";
-import useViewportHeight from "../hooks/useViewportHeight";
+import { track } from '@vercel/analytics'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Button } from '@nextui-org/react'
+import TopicSelector from './TopicSelector'
+import { setPodcastTopics, fetchRecommendations } from './storage'
+import useViewportHeight from '../hooks/useViewportHeight'
 
-export function SettingsForm() {
-  const router = useRouter();
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [topics, setTopics] = useState<string[]>([]);
+export function SettingsForm () {
+  const router = useRouter()
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const [topics, setTopics] = useState<string[]>([])
 
-  useViewportHeight();
-  
+  useViewportHeight()
+
   const onClick = async () => {
-    setIsDisabled(true);
-    setPodcastTopics(topics);
-    track("settingsFormSubmit", { topics: JSON.stringify(topics) });
-    await fetchRecommendations(topics);
-    router.push("/app");
-  };
+    setIsDisabled(true)
+    setPodcastTopics(topics)
+    track('settingsFormSubmit', { topics: JSON.stringify(topics) })
+    await fetchRecommendations(topics)
+    router.push('/app')
+  }
 
   const onSelect = (topics: string[]) => {
-    setTopics(topics);
+    setTopics(topics)
     if (topics.length > 1) {
-      setIsDisabled(false);
+      setIsDisabled(false)
     } else {
-      setIsDisabled(true);
+      setIsDisabled(true)
     }
-  };
+  }
 
   return (
     <>
@@ -45,5 +45,5 @@ export function SettingsForm() {
         </Button>
       </div>
     </>
-  );
+  )
 }

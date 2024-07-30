@@ -1,5 +1,5 @@
-export default function AppLayout({
-  children,
+export default function AppLayout ({
+  children
 }: {
   children: React.ReactNode
 }) {
@@ -15,5 +15,5 @@ export default function AppLayout({
             </div>
           </div>
       </div>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { getContentJson } from "./getContent";
-import { getTotalContentLengthInWords, getOutroLengthInWords, getContentChunkLengthInWords } from './helpers'; 
-import { TopicsResponse } from "../../../types";
+import { getContentJson } from './getContent'
+import { getTotalContentLengthInWords, getOutroLengthInWords, getContentChunkLengthInWords } from './helpers'
+import { type TopicsResponse } from '../../../types'
 
 export const getTopics = async (topic: string, durationSec: number, context: string[]) => {
-  const contentLengthInWords = getTotalContentLengthInWords(durationSec); // intro and outro
-  const maxChapters = Math.max(Math.floor(contentLengthInWords / (60 * 3)), 1); // at least one chapter
+  const contentLengthInWords = getTotalContentLengthInWords(durationSec) // intro and outro
+  const maxChapters = Math.max(Math.floor(contentLengthInWords / (60 * 3)), 1) // at least one chapter
   const prompt = `
     Content:
     Write a topic outline for a podcast about ${topic}.
@@ -31,20 +31,20 @@ export const getTopics = async (topic: string, durationSec: number, context: str
 
     IMPORTANT! Return ONLY a JSON object. Don't add quotes or comments around it.
   `
-  const response = await getContentJson<TopicsResponse>(prompt, context);
+  const response = await getContentJson<TopicsResponse>(prompt, context)
 
-  const introOutroDuration = getOutroLengthInWords(durationSec);
-  const desiredChunkLength = getContentChunkLengthInWords(durationSec, response.topics);
-  console.log(`Desired chunk length is ${desiredChunkLength}`);
-  console.log(`Desired intro/outro length is ${introOutroDuration}`);
+  const introOutroDuration = getOutroLengthInWords(durationSec)
+  const desiredChunkLength = getContentChunkLengthInWords(durationSec, response.topics)
+  console.log(`Desired chunk length is ${desiredChunkLength}`)
+  console.log(`Desired intro/outro length is ${introOutroDuration}`)
 
   response.topics.forEach((t, index) => {
     if (index === 0 || index === response.topics.length - 1) {
-      t.words = introOutroDuration;
+      t.words = introOutroDuration
     } else {
-      t.words = desiredChunkLength;
+      t.words = desiredChunkLength
     }
-  });
+  })
 
-  return response;
+  return response
 }

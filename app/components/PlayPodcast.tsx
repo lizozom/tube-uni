@@ -1,65 +1,63 @@
-"use client";
+'use client'
 
-import { useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import { track } from "@vercel/analytics";
-import usePodcastBlob from "../hooks/usePodcastBlob";
+import { useRef, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
+import { track } from '@vercel/analytics'
+import usePodcastBlob from '../hooks/usePodcastBlob'
 
-function PlayPodcast() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const audioFile = searchParams.get("audioFile");
-  const topic = searchParams.get("topic");
-  const travelTimeMin = searchParams.get("travelTimeMin") as any as number;
-  const { podcastBlob, loading, error } = usePodcastBlob(audioFile);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [canPlay, setCanPlay] = useState(false);
+function PlayPodcast () {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const audioFile = searchParams.get('audioFile')
+  const topic = searchParams.get('topic')
+  const travelTimeMin = searchParams.get('travelTimeMin') as any as number
+  const { podcastBlob, loading, error } = usePodcastBlob(audioFile)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [canPlay, setCanPlay] = useState(false)
 
   // use the podcast blob to play the audio
   useEffect(() => {
-    if (!audioRef.current) return;
+    if (!audioRef.current) return
 
     if (podcastBlob) {
-      const url = URL.createObjectURL(podcastBlob);
-      audioRef.current.src = url;
+      const url = URL.createObjectURL(podcastBlob)
+      audioRef.current.src = url
     }
-  }, [podcastBlob]);
+  }, [podcastBlob])
 
   useEffect(() => {
     if (!loading && !error && podcastBlob) {
-      setCanPlay(true);
+      setCanPlay(true)
     }
-  }, [podcastBlob, loading, error] );
-
+  }, [podcastBlob, loading, error])
 
   if (!topic || !travelTimeMin || !audioFile) {
     return (
       <main>
         <h1>Invalid parameters</h1>
       </main>
-    );
+    )
   }
 
   const onBack = () => {
-    track("backButtonClick");
-    router.push("/app");
-  };
+    track('backButtonClick')
+    router.push('/app')
+  }
 
   const playAudio = () => {
-    track("download", { topic: topic || "" });
-    if (!audioRef.current) return;
+    track('download', { topic: topic || '' })
+    if (!audioRef.current) return
 
     if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+      audioRef.current.pause()
+      setIsPlaying(false)
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      audioRef.current.play()
+      setIsPlaying(true)
     }
-  };
+  }
 
   return (
     <div className="flex real-100vh relative">
@@ -88,7 +86,7 @@ function PlayPodcast() {
         back to start
       </button>
     </div>
-  );
+  )
 }
 
-export default PlayPodcast;
+export default PlayPodcast

@@ -1,109 +1,104 @@
-
-import { Storage } from '@google-cloud/storage';
-import { v1beta1 } from '@google-cloud/text-to-speech';
-import { credentials } from './credentials';
-import { ScriptResponse } from '../../../types';
+import { Storage } from '@google-cloud/storage'
+import { v1beta1 } from '@google-cloud/text-to-speech'
+import { credentials } from './credentials'
+import { type ScriptResponse } from '../../../types'
 
 const ttsLongClient = new v1beta1.TextToSpeechLongAudioSynthesizeClient({
   credentials
-});
+})
 
 const storageClient = new Storage({
   credentials
-});
+})
 
-const GS_PATH = 'gs://tube-uni-podcasts/podcasts/';
+const GS_PATH = 'gs://tube-uni-podcasts/podcasts/'
 
 const checkFileExists = async (fileName: string) => {
-  const bucket = storageClient.bucket("tube-uni-podcasts");
-  const resp = await bucket.file(fileName).exists();
-  return resp[0];
+  const bucket = storageClient.bucket('tube-uni-podcasts')
+  const resp = await bucket.file(fileName).exists()
+  return resp[0]
 }
 
-const sleep = (ms: number) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+const sleep = async (ms: number) => {
+  return await new Promise(resolve => setTimeout(resolve, ms))
 }
-
 
 const getAudioLongGcp = async (script: ScriptResponse, fileName: string) => {
-  return new Promise(async (resolve, reject) => {
+  return await new Promise(async (resolve, reject) => {
     const request = {
       parent: `projects/${process.env.GOOGLE_PROJECT_NUMBER}/locations/global`,
       outputGcsUri: `${GS_PATH}${fileName}`,
       input: { ssml: script.content },
       voice: {
-        languageCode: "en-us",
-        name: "en-US-Neural2-F"
+        languageCode: 'en-us',
+        name: 'en-US-Neural2-F'
       },
       audioConfig: {
-        audioEncoding: "LINEAR16" as any,
+        audioEncoding: 'LINEAR16' as any,
         effectsProfileId: [
-          "small-bluetooth-speaker-class-device"
+          'small-bluetooth-speaker-class-device'
         ],
         pitch: 0,
         speakingRate: 1
       }
-    };
+    }
 
     try {
-      const response = await ttsLongClient.synthesizeLongAudio(request);
+      const response = await ttsLongClient.synthesizeLongAudio(request)
 
-      const [operation] = response;
-      if (operation && operation.name) {
-
-        let counter = 0;
+      const [operation] = response
+      if (operation?.name) {
+        let counter = 0
         do {
-          const checkDone = await ttsLongClient.checkSynthesizeLongAudioProgress(operation.name);
-          counter++;
+          const checkDone = await ttsLongClient.checkSynthesizeLongAudioProgress(operation.name)
+          counter++
 
           if (checkDone.done) {
             if (checkDone.error) {
-              reject(checkDone.error);
+              reject(checkDone.error)
             }
-            resolve('ok');
-            break;
+            resolve('ok')
+            break
           } else if (counter >= 100) {
-            reject("Audio generation took too long");
-            break;
+            reject('Audio generation took too long')
+            break
           } else {
-            await sleep(1500);
+            await sleep(1500)
           }
-        } while (true);
+        } while (true)
       }
-
     } catch (e) {
-      reject(e);
+      reject(e)
     }
-  });
+  })
 }
 
 export const getAudioFilename = (topic: string, duration: number) => {
-  return `${topic.replace(/ /g, "_")}_${duration}.mp3`;
+  return `${topic.replace(/ /g, '_')}_${duration}.mp3`
 }
 
 export const checkAudioExists = async (topic: string, duration: number) => {
-  const fileName = getAudioFilename(topic, duration);
-  return checkFileExists(`podcasts/${fileName}`);
+  const fileName = getAudioFilename(topic, duration)
+  return await checkFileExists(`podcasts/${fileName}`)
 }
 
 export const getAudioUrl = (topic: string, duration: number) => {
-  const fileName = getAudioFilename(topic, duration);
-  return `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`;
+  const fileName = getAudioFilename(topic, duration)
+  return `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`
 }
 
 export const getAudioLong = async (script: ScriptResponse, topic: string, duration: number) => {
-  return new Promise(async (resolve, reject) => {
-
-    const fileName = getAudioFilename(topic, duration);
-    const outputUrl = getAudioUrl(topic, duration);
-    const fileExists = await checkAudioExists(topic, duration);
+  return await new Promise(async (resolve, reject) => {
+    const fileName = getAudioFilename(topic, duration)
+    const outputUrl = getAudioUrl(topic, duration)
+    const fileExists = await checkAudioExists(topic, duration)
 
     if (fileExists) {
-      resolve(outputUrl);
+      resolve(outputUrl)
     } else {
-      console.log(`Generating audio for ${topic} with duration ${duration}`);
-      await getAudioLongGcp(script, fileName);
-      resolve(outputUrl);
+      console.log(`Generating audio for ${topic} with duration ${duration}`)
+      await getAudioLongGcp(script, fileName)
+      resolve(outputUrl)
     }
-  });
+  })
 }

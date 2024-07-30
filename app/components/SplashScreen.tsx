@@ -1,38 +1,37 @@
-"use client";
+'use client'
 
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { track } from '@vercel/analytics';
+import { Button } from '@nextui-org/react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { track } from '@vercel/analytics'
 import { useRouter } from 'next/navigation'
-import { getPodcastTopics } from "./storage";
-import useViewportHeight from "../hooks/useViewportHeight";
+import { getPodcastTopics } from './storage'
+import useViewportHeight from '../hooks/useViewportHeight'
 
 export interface SplashScreenProps {}
 
-export function SplashScreen() {
+export function SplashScreen () {
+  const router = useRouter()
+  const [display, setDisplay] = useState<boolean>(false)
 
-  const router = useRouter();
-  const [display, setDisplay] = useState<boolean>(false);
-  
-  useViewportHeight();
+  useViewportHeight()
 
   useEffect(() => {
-    setDisplay(true);
-  }, []);
+    setDisplay(true)
+  }, [])
 
   const onClick = () => {
-    track('splashScreenClick');
+    track('splashScreenClick')
     if (getPodcastTopics()) {
-      router.push('/app');
+      router.push('/app')
     } else {
-      router.push('/app/settings');
+      router.push('/app/settings')
     }
   }
-  
+
   if (!display) {
-    return null;
-  } 
+    return null
+  }
   return (
     <div className="flex real-100vh relative">
         <div className="flex m-auto flex-col items-center gap-4 pb-16">
@@ -48,11 +47,11 @@ export function SplashScreen() {
               <span className="text-2xl text-center">do something useful with<br/>your commute, dummy</span>
               <div className=" absolute bottom-[35px] left-[50%] -translate-x-[50%]">
                   <Button className="mt-4 rounded-none create-button text-main" onClick={onClick}>
-                  yes please           
+                  yes please
                   </Button>
               </div>
         </div>
     </div>
 
-  );
+  )
 }

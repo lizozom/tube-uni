@@ -1,9 +1,9 @@
-import { SettingsForm } from '../../components/SettingsForm';
+import { SettingsForm } from '../../components/SettingsForm'
 
-export default function Settings() { 
+export default function Settings () {
   return (
     <>
-      
+
       <div className="flex flex-col gap-4">
         <div className="px-4 text-main">
           what do you fancy?
@@ -12,5 +12,5 @@ export default function Settings() {
 
       <SettingsForm />
     </>
-  );
+  )
 }
