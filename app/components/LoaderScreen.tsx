@@ -1,6 +1,9 @@
 'use client'
+import useViewportHeight from '../hooks/useViewportHeight'
 
 export function LoadingScreen () {
+  useViewportHeight();
+  
   return (
     <div className="flex h-screen w-screen absolute top-0 page-wrapper">
         <div className="flex my-[50%] flex-col gap-8 w-full">
