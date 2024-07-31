@@ -123,3 +123,30 @@ body {
     margin: auto;
   }
 }
+
+.button-container {
+  perspective: 1000px;
+}
+
+.button {
+  width: 147px;
+  height: 147px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  position: relative;
+}
+
+.button svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+}
+
+.button svg.pause {
+  transform: rotateY(180deg);
+}
+
+.button.flipped {
+  transform: rotateY(180deg);
+}

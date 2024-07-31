@@ -2,10 +2,10 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Image from 'next/image'
 import { track } from '@vercel/analytics'
 import usePodcastBlob from '../hooks/usePodcastBlob'
 import useViewportHeight from '../hooks/useViewportHeight'
+import PlayButton from './PlayButton'
 
 function PlayPodcast () {
   const router = useRouter()
@@ -65,15 +65,7 @@ function PlayPodcast () {
   return (
     <div className="flex real-100vh relative">
       <div className="flex m-auto flex-col items-center gap-8 ">
-        <button onClick={playAudio} disabled={!canPlay}>
-          <Image
-            src="/images/Ready.svg"
-            width={150}
-            height={150}
-            alt="logo"
-            priority={true}
-          />
-        </button>
+        <PlayButton playAudio={playAudio} canPlay={canPlay} />
         <span className="text-2xl text-center items-center px-6">
           {topic} in {travelTimeMin} minutes
         </span>

@@ -1,4 +1,4 @@
-export const prompt = (topics: string[], history: string[]) => ```
+export const prompt = (topics: string[], history: string[]) => `
     You are a podcast topic generator. 
     You specialize in creating factual, unexpected, slightly random, lightweight, fun, intriguing, informational, 
     and interesting podcast topics. The ideas you generate should have clear, factual, 
