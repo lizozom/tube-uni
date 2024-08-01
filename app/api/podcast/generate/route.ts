@@ -21,7 +21,7 @@ export async function POST (
     const key = `user:${ip}`
     const requestedPodcasts: number | null = await kv.get(key)
     console.log(`User ${ip} has requested ${requestedPodcasts} podcasts today`)
-    
+
     if (!requestedPodcasts) {
       await kv.set(key, 1, { ex: 60 * 60 * 24 })
     } else if (requestedPodcasts > maxCount) {
