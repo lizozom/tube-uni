@@ -23,6 +23,13 @@ export function ErrorScreen (props: ErrorScreenProps) {
         <span className="text-2xl text-center items-center">it seems we could not create<br/>a good podcast on this topic</span>
       </>
     )
+  } else if (errorOrCode?.message === '429') {
+    errMsg = (
+      <>
+        <span className="text-2xl text-center items-center">You can only create 10 podcasts per day</span>
+      </>
+    )
+
   }
 
   return (
