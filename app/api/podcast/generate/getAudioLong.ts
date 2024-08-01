@@ -11,7 +11,7 @@ const storageClient = new Storage({
   credentials
 })
 
-const BUCKET_NAME = process.env.BUCKET_NAME || '';
+const BUCKET_NAME = process.env.BUCKET_NAME || ''
 const GS_PATH = `gs://${BUCKET_NAME}/podcasts/`
 
 const checkFileExists = async (fileName: string) => {
