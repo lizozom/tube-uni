@@ -34,11 +34,12 @@ export function ErrorScreen (props: ErrorScreenProps) {
       </>
     )
   } else if (errorOrCode?.message === '429') {
-  errMsg = (
-    <>
-      <span className="text-2xl text-center items-center">You can only create 10 podcasts per day</span>
-    </>
-  )
+    errMsg = (
+      <>
+        <span className="text-2xl text-center items-center">You can only create 10 podcasts per day</span>
+      </>
+    )
+  }
 
   return (
     <div className="flex real-100vh w-full absolute  top-0 page-wrapper">
