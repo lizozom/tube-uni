@@ -13,6 +13,22 @@ export const dynamic = 'force-dynamic';
 export async function GET(
   req: NextRequest
 ) {
+
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip');
+
+  if (ip) {
+    // allow at most 10 podcasts per day
+    const key = `user:${ip}`;
+    const requestedPodcasts: number | null= await kv.get(key);
+    if (!requestedPodcasts) {
+      await kv.set(key, 1, { ex: 60 * 60 * 24 });
+    } else if( requestedPodcasts > 10) {
+      return NextResponse.json({ errorCode: 429 });
+    } else {
+      await kv.set(key, requestedPodcasts + 1);
+    }
+  }
+
   const { searchParams } = req.nextUrl;
   const topic = (searchParams.get('topic') || "This history of London")
     .trim()
@@ -32,13 +48,13 @@ export async function GET(
     return NextResponse.json({ errorCode: 400 });
   }
 
-  const key = `${topic.toLowerCase()}-${duration}`;
-  const cached =  process.env.CACHE_ACTIVE ? await kv.get(key) : false;
+  const cacheKey = `${process.env.APP_VERSION}-${topic.toLowerCase()}-${duration}`;
+  const cached =  process.env.CACHE_ACTIVE ? await kv.get(cacheKey) : false;
   let startTime = performance.now();
 
   let response: any = {};
   if (cached) {
-    console.log(`Cached response: ${key}`);
+    console.log(`Cached response: ${cacheKey}`);
     response = cached;
   } else {
     try {
@@ -67,7 +83,7 @@ export async function GET(
     }
   }
 
-  kv.set(key, response, { ex: 60 * 60 * 24 });
+  kv.set(cacheKey, response, { ex: 60 * 60 * 24 });
 
   console.log("Getting audio")
   try {
