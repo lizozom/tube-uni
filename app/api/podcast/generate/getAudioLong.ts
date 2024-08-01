@@ -11,10 +11,11 @@ const storageClient = new Storage({
   credentials
 })
 
-const GS_PATH = 'gs://tube-uni-podcasts/podcasts/'
+const BUCKET_NAME = process.env.BUCKET_NAME || '';
+const GS_PATH = `gs://${BUCKET_NAME}/podcasts/`
 
 const checkFileExists = async (fileName: string) => {
-  const bucket = storageClient.bucket('tube-uni-podcasts')
+  const bucket = storageClient.bucket(BUCKET_NAME)
   const resp = await bucket.file(fileName).exists()
   return resp[0]
 }
@@ -76,7 +77,7 @@ export const checkAudioExists = async (topic: string, duration: number) => {
 
 export const getAudioUrl = (topic: string, duration: number) => {
   const fileName = getAudioFilename(topic, duration)
-  return `https://storage.googleapis.com/tube-uni-podcasts/podcasts/${fileName}`
+  return `https://storage.googleapis.com/${BUCKET_NAME}/podcasts/${fileName}`
 }
 
 export const getAudioLong = async (script: ScriptResponse, topic: string, duration: number) => {
