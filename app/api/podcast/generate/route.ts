@@ -18,7 +18,7 @@ export async function POST (
 
   if (ip) {
     // allow at most 10 podcasts per day
-    const maxCount = Number(process.env.MAX_PODCASTS_PER_DAY, '10');
+    const maxCount = Number(process.env.MAX_PODCASTS_PER_DAY || '10');
     const key = `user:${ip}`;
     const requestedPodcasts: number | null= await kv.get(key);
     if (!requestedPodcasts) {
