@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { track } from '@vercel/analytics';
+import { Button } from '@nextui-org/react'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { track } from '@vercel/analytics'
 
 export interface SplashScreenProps {
-  onClick: () => void;
+  onClick: () => void
 }
 
-export function SplashScreen(props: SplashScreenProps) {
-  const [display, setDisplay] = useState<boolean>(false);
+export function SplashScreen (props: SplashScreenProps) {
+  const [display, setDisplay] = useState<boolean>(false)
 
   useEffect(() => {
-    setDisplay(true);
-  }, []);
+    setDisplay(true)
+  }, [])
 
   const onClick = () => {
-    track('splashScreenClick');
-    props.onClick();
+    track('splashScreenClick')
+    props.onClick()
   }
-  
+
   if (!display) {
-    return null;
-  } 
+    return null
+  }
   return (
     <div className="flex real-100vh relative">
         <div className="flex m-auto flex-col items-center gap-4 pb-16">
@@ -38,11 +38,11 @@ export function SplashScreen(props: SplashScreenProps) {
               <span className="text-2xl text-center">do something useful with<br/>your commute, dummy</span>
               <div className=" absolute bottom-[35px] left-[50%] -translate-x-[50%]">
                   <Button className="mt-4 rounded-none create-button text-main" onClick={onClick}>
-                  yes please           
+                  yes please
                   </Button>
               </div>
         </div>
     </div>
 
-  );
+  )
 }

@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { track } from '@vercel/analytics';
+import Image from 'next/image'
+import { track } from '@vercel/analytics'
 
 export interface PlayScreenProps {
-  topic: string;
-  duration: number;
-  audioFile: string;
-  onBack: () => void;
+  topic: string
+  duration: number
+  audioFile: string
+  onBack: () => void
 }
 
-function downloadAudio(name: string, fileName: string) {
+function downloadAudio (name: string, fileName: string) {
   // const byteCharacters = atob(mp3String);
   // const byteNumbers = new Array(byteCharacters.length);
   // for (let i = 0; i < byteCharacters.length; i++) {
@@ -20,25 +20,24 @@ function downloadAudio(name: string, fileName: string) {
   // const blob = new Blob([byteArray], { type: 'audio/mpeg' });
 
   // const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = fileName;
-  a.download = `${name}.mp3`;
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const a = document.createElement('a')
+  a.href = fileName
+  a.download = `${name}.mp3`
+  a.target = '_blank'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
 }
 
-
-export function PlayScreen(props: PlayScreenProps) {
-  const { topic, duration, audioFile, onBack } = props;
+export function PlayScreen (props: PlayScreenProps) {
+  const { topic, duration, audioFile, onBack } = props
 
   const playAudio = () => {
     // playAudioString(audio.audioContent);
-    track('download', { topic: topic || '' });
-    downloadAudio(topic.toLowerCase().replace(/ /g, "_"), audioFile);  
+    track('download', { topic: topic || '' })
+    downloadAudio(topic.toLowerCase().replace(/ /g, '_'), audioFile)
   }
-  
+
   return (
     <div className="flex real-100vh relative">
         <div className="flex m-auto flex-col items-center gap-8 ">
@@ -57,5 +56,5 @@ export function PlayScreen(props: PlayScreenProps) {
         </button>
     </div>
 
-  );
+  )
 }

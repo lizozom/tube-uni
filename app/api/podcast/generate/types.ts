@@ -1,6 +1,4 @@
-
 export interface ScriptResponse {
-    content: string,
-    chunks: string[]
-  }
-  
+  content: string
+  chunks: string[]
+}

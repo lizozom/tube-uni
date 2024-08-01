@@ -1,6 +1,5 @@
-
-import { stations } from './api/stations';
-import { CommuteApp } from "./components/CommuteApp";
+import { stations } from './api/stations'
+import { CommuteApp } from './components/CommuteApp'
 
 const topics = [
   'the history of toothbrushes',
@@ -27,16 +26,15 @@ const topics = [
   'how were zodiac signs created',
   'why people care about gold',
   'why the mona lisa is so famous',
-  'how long do animals sleep',
+  'how long do animals sleep'
 ]
 
+export default function Home () {
+  const placeholderTopic = topics[Math.floor(Math.random() * topics.length)]
 
-export default function Home() {  
-  const placeholderTopic = topics[Math.floor(Math.random() * topics.length)];
-  
   return (
     <main className="flex real-100vh w-full max-w-full flex-col items-left justify-between">
       <CommuteApp stations={stations} topics={topics} placeholderTopic={placeholderTopic}/>
     </main>
-  );
+  )
 }

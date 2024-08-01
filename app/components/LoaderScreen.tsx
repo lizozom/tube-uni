@@ -1,10 +1,6 @@
-"use client";
+'use client'
 
-export interface LoadingScreenProps {
-}
-
-export function LoadingScreen(props: LoadingScreenProps) {
-  
+export function LoadingScreen () {
   return (
     <div className="flex h-screen relative">
         <div className="flex my-[50%] flex-col gap-8 w-full">
@@ -16,5 +12,5 @@ export function LoadingScreen(props: LoadingScreenProps) {
         </div>
     </div>
 
-  );
+  )
 }

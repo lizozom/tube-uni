@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import Image from "next/image";
+import Image from 'next/image'
 
 export interface ErrorScreenProps {
-  onBack: () => void;
-  errorOrCode?: Error | undefined;
+  onBack: () => void
+  errorOrCode?: Error | undefined
 }
 
-export function ErrorScreen(props: ErrorScreenProps) {
-  const { onBack, errorOrCode } = props;
+export function ErrorScreen (props: ErrorScreenProps) {
+  const { onBack, errorOrCode } = props
 
   let errMsg = (
     <>
-      <span className="text-2xl text-center items-center">it's not you, it's us<br/>but something went wrong.</span>
-      <span className="text-2xl text-center items-center">we're sorry</span>
+      <span className="text-2xl text-center items-center">it&apos;s not you, it&apos;s us<br/>but something went wrong.</span>
+      <span className="text-2xl text-center items-center">we&apos;re sorry</span>
     </>
-  );
+  )
 
-  if (errorOrCode?.message === "400") {
+  if (errorOrCode?.message === '400') {
     errMsg = (
       <>
         <span className="text-2xl text-center items-center">it seems we could not create<br/>a good podcast on this topic</span>
@@ -25,7 +25,6 @@ export function ErrorScreen(props: ErrorScreenProps) {
     )
   }
 
-  
   return (
     <div className="flex real-100vh relative">
         <div className="flex m-auto flex-col items-center gap-8 ">
@@ -43,5 +42,5 @@ export function ErrorScreen(props: ErrorScreenProps) {
         </button>
     </div>
 
-  );
+  )
 }
