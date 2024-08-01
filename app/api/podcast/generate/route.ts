@@ -13,20 +13,19 @@ export const dynamic = 'force-dynamic'
 export async function POST (
   req: NextRequest
 ) {
-
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip');
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
 
   if (ip) {
     // allow at most 10 podcasts per day
-    const maxCount = Number(process.env.MAX_PODCASTS_PER_DAY || '10');
-    const key = `user:${ip}`;
-    const requestedPodcasts: number | null= await kv.get(key);
+    const maxCount = Number(process.env.MAX_PODCASTS_PER_DAY || '10')
+    const key = `user:${ip}`
+    const requestedPodcasts: number | null = await kv.get(key)
     if (!requestedPodcasts) {
-      await kv.set(key, 1, { ex: 60 * 60 * 24 });
-    } else if( requestedPodcasts > maxCount) {
-      return NextResponse.json({ errorCode: 429 });
+      await kv.set(key, 1, { ex: 60 * 60 * 24 })
+    } else if (requestedPodcasts > maxCount) {
+      return NextResponse.json({ errorCode: 429 })
     } else {
-      await kv.set(key, requestedPodcasts + 1);
+      await kv.set(key, requestedPodcasts + 1)
     }
   }
 
@@ -48,7 +47,7 @@ export async function POST (
     return NextResponse.json({ errorCode: 400 })
   }
 
-  const cacheKey = `${process.env.APP_VERSION}-${topic.toLowerCase()}-${duration}`;
+  const cacheKey = `${process.env.APP_VERSION}-${topic.toLowerCase()}-${duration}`
   console.log('Cache is active: ', process.env.CACHE_ACTIVE)
   const cached = process.env.CACHE_ACTIVE === 'true' ? (await kv.get(cacheKey)) : false
   let startTime = performance.now()
